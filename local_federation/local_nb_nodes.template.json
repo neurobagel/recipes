@@ -1,0 +1,10 @@
+[
+    {
+        "NodeName": "First Node",
+        "ApiURL": "https://myfirstnode.org/"
+    },
+    {
+        "NodeName": "Second Node",
+        "ApiURL": "https://mysecondnode.org/"
+    }
+]
