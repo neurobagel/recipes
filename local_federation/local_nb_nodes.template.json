@@ -1,10 +1,10 @@
 [
     {
-        "NodeName": "First Node",
-        "ApiURL": "https://myfirstnode.org/"
+        "NodeName": "Local graph 1",
+        "ApiURL": "http://host.docker.internal:8000"
     },
     {
-        "NodeName": "Second Node",
-        "ApiURL": "https://mysecondnode.org/"
+        "NodeName": "Local graph 2",
+        "ApiURL": "http://192.168.0.1"
     }
 ]

@@ -9,6 +9,8 @@ services:
       - "${PWD}/local_nb_nodes.json:/usr/src/local_nb_nodes.json:ro"
     environment:
       - NB_API_PORT=${NB_API_PORT:-8000}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   query:
     image: "neurobagel/query_tool:${NB_QUERY_TAG:-latest}"
     ports:
