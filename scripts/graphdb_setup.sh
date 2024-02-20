@@ -138,15 +138,27 @@ echo "The GraphDB server is being accessed at http://localhost:${NB_GRAPH_PORT_H
 ##### First time GraphDB setup #####
 
 if [ "${RUN_USER_SETUP}" = "on" ]; then
-    # 1. Change database admin password and allow only authenticated users access
     echo "First time GraphDB user setup enabled."
-    echo "Changing the admin password..."
-    curl -X PATCH --header 'Content-Type: application/json' http://localhost:${NB_GRAPH_PORT_HOST}/rest/security/users/admin -d "{\"password\": \""${ADMIN_PASS}"\"}"
-    echo "Allowing only authenticated users access..."
-    curl -X POST --header 'Content-Type: application/json' -d true http://localhost:${NB_GRAPH_PORT_HOST}/rest/security
 
-    # 2. Create a new database user
-    echo "Creating a new database user ${NB_GRAPH_USERNAME}..."
+    # 1. Change database admin password
+    echo "Changing the admin password (note: if you have previously set the admin password, this has no effect)..."
+	# TODO: To change a *previously set* admin password, we need to also provide the current password via -u
+    curl -X PATCH --header 'Content-Type: application/json' http://localhost:${NB_GRAPH_PORT_HOST}/rest/security/users/admin -d "{\"password\": \""${ADMIN_PASS}"\"}"
+    
+	# 2. If security is not enabled, enable it (i.e. allow only authenticated users access)
+	is_security_enabled=$(curl -s -X GET http://localhost:${NB_GRAPH_PORT_HOST}/rest/security)
+	if [ "${is_security_enabled}" = "false" ]; then
+		echo "Allowing only authenticated users access..."
+		# NOTE: This command fails without credentials once security is enabled
+		curl -X POST --header 'Content-Type: application/json' -d true http://localhost:${NB_GRAPH_PORT_HOST}/rest/security
+	else
+		echo "Security has already been enabled."
+	fi
+
+    # 3. Create a new database user
+	# TODO: Separate this out from the first-time setup? As this can technically be run at any time to create additional users.
+	# NOTE: If user already exists, response will be "An account with the given username already exists." OK for script.
+	echo "Creating a new database user ${NB_GRAPH_USERNAME}..."
     curl -X POST --header 'Content-Type: application/json' -u "admin:${ADMIN_PASS}" -d @- http://localhost:${NB_GRAPH_PORT_HOST}/rest/security/users/${NB_GRAPH_USERNAME} <<EOF
     {
         "username": "${NB_GRAPH_USERNAME}",
@@ -158,15 +170,27 @@ fi
 
 ##### Database setup #####
 
-# 3. Create and save custom configuration file for the new database
+# 4. Create and save custom configuration file for the new database
 # TODO: Should we add a suffix to data-config.ttl for the db name?
-echo "Creating a GraphDB configuration file (./data-config.ttl) for the new database ${DB_NAME}: ..."
+echo "Creating a GraphDB configuration file (./data-config.ttl) for the new database ${DB_NAME}..."
 sed 's/rep:repositoryID "my_db" ;/rep:repositoryID "'"${DB_NAME}"'" ;/' ${SCRIPT_DIR}/data-config_template.ttl > data-config.ttl
 
-# 4. Create a new database and give newly created user access permission
+# 5. Create a new database
 # Assumes data-config.ttl is in the same directory as this script!
 echo "Creating the GraphDB database ${DB_NAME}..."
 curl -X PUT -u "admin:${ADMIN_PASS}" http://localhost:${NB_GRAPH_PORT_HOST}/${NB_GRAPH_DB} --data-binary "@data-config.ttl" -H "Content-Type: application/x-turtle"
+
+# 6. Grant newly created user access permission to the database
+# Confirm user wants to proceed with changing user permissions
+while true; do
+	read -p "WARNING: Database access permissions of ${NB_GRAPH_USERNAME} will now be updated. This operation will OVERWRITE any existing permissions you have granted to user ${NB_GRAPH_USERNAME}. Proceed? (y/n) " yn
+	case $yn in
+		[Yy]* ) break;;
+		[Nn]* ) echo "Exiting..."; exit;;
+		* ) echo "Please answer y or n.";;
+	esac
+done
+
 echo "Granting user ${NB_GRAPH_USERNAME} read/write permissions to database ${DB_NAME}..."
 curl -X PUT --header 'Content-Type: application/json' -d "
 {\"grantedAuthorities\": [\"WRITE_REPO_${DB_NAME}\",\"READ_REPO_${DB_NAME}\"]}" http://localhost:${NB_GRAPH_PORT_HOST}/rest/security/users/${NB_GRAPH_USERNAME} -u "admin:${ADMIN_PASS}"
