@@ -148,11 +148,11 @@ if [ "${RUN_USER_SETUP}" = "on" ]; then
 	# 2. If security is not enabled, enable it (i.e. allow only authenticated users access)
 	is_security_enabled=$(curl -s -X GET http://localhost:${NB_GRAPH_PORT_HOST}/rest/security)
 	if [ "${is_security_enabled}" = "false" ]; then
-		echo "Allowing only authenticated users access..."
+		echo "Enabling password-based access control to all databases ..."
 		# NOTE: This command fails without credentials once security is enabled
 		curl -X POST --header 'Content-Type: application/json' -d true http://localhost:${NB_GRAPH_PORT_HOST}/rest/security
 	else
-		echo "Security has already been enabled."
+		echo "Password-based access control has already been enabled."
 	fi
 
     # 3. Create a new database user
@@ -183,7 +183,7 @@ curl -X PUT -u "admin:${ADMIN_PASS}" http://localhost:${NB_GRAPH_PORT_HOST}/${NB
 # 6. Grant newly created user access permission to the database
 # Confirm user wants to proceed with changing user permissions
 while true; do
-	read -p "WARNING: Database access permissions of ${NB_GRAPH_USERNAME} will now be updated. This operation will OVERWRITE any existing permissions you have granted to user ${NB_GRAPH_USERNAME}. Proceed? (y/n) " yn
+	read -p "WARNING: We will now give ${NB_GRAPH_USERNAME} read/write access to ${NB_GRAPH_DB}. This operation will REPLACE any existing permissions you have granted to user ${NB_GRAPH_USERNAME}, including any access to other databases. ${NB_GRAPH_USERNAME} may lose access to other databases as a result. Proceed? (y/n) " yn
 	case $yn in
 		[Yy]* ) break;;
 		[Nn]* ) echo "Exiting..."; exit;;
