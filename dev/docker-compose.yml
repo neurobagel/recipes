@@ -1,6 +1,7 @@
 version: "3.8"
 
 services:
+
   api:
     image: "neurobagel/api:${NB_NAPI_TAG:-latest}"
     ports:
@@ -14,6 +15,7 @@ services:
       NB_RETURN_AGG: ${NB_RETURN_AGG:-true}
       NB_API_PORT: ${NB_NAPI_PORT:-8000}
       NB_API_ALLOWED_ORIGINS: ${NB_NAPI_ALLOWED_ORIGINS}
+  
   graph:
     image: "${NB_GRAPH_IMG:-ontotext/graphdb:10.3.1}"
     volumes:
@@ -24,6 +26,7 @@ services:
     entrypoint:
       - "/usr/src/setup.sh"
     working_dir: "/usr/src"
+
   federation:
     image: "neurobagel/federation_api:${NB_FAPI_TAG:-latest}"
     ports:
@@ -34,6 +37,7 @@ services:
       NB_API_PORT: ${NB_FAPI_PORT:-8000}
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
   query:
     image: "neurobagel/query_tool:${NB_QUERY_TAG:-latest}"
     ports:
