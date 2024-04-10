@@ -30,24 +30,24 @@ Ensure to edit the file(s) according to your deployment.
 
 4. Start the Docker Compose stack and specify your desired deployment profile
 
-**To set up only a local node:**
-```bash
-docker compose up -d
-```
-or
-```bash
-docker compose --profile local_node up -d
-```
+    **To set up only a local node:**
+    ```bash
+    docker compose up -d
+    ```
+    or
+    ```bash
+    docker compose --profile local_node up -d
+    ```
 
-**To set up a local node with a graphical query tool:**
-```bash
-docker compose --profile local_node_query up -d
-```
+    **To set up a local node with a graphical query tool:**
+    ```bash
+    docker compose --profile local_node_query up -d
+    ```
 
-**To set up a local node and local federation (including a graphical query tool):**
-```bash
-docker compose --profile full_stack up -d
-```
+    **To set up a local node and local federation (including a graphical query tool):**
+    ```bash
+    docker compose --profile full_stack up -d
+    ```
 
 ### Using deployment type-specific Docker Compose files
 
