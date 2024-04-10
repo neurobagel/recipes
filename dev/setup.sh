@@ -27,7 +27,7 @@ main() {
     echo "Finished setting up the Neurobagel graph backend."
 }
 
-main 2>&1 | tee -a ./NEUROBAGEL_SETUP_LOG.txt
+main 2>&1 | tee -a ./DEPLOY.log
 
 # We don't have jobcontrol here, so can't bring GraphDB back to foreground
 # instead we'll wait
