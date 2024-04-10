@@ -48,6 +48,7 @@ Ensure to edit the file(s) according to your deployment.
     ```bash
     docker compose --profile full_stack up -d
     ```
+A log file `DEPLOY.log` will be automatically created in the current directory with a copy of the STDOUT from the automatic deployment process.
 
 ### Using deployment type-specific Docker Compose files
 
