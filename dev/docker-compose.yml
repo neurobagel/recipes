@@ -29,7 +29,7 @@ services:
     volumes:
       - "${NB_GRAPH_ROOT_HOST:-~/graphdb-home}:${NB_GRAPH_ROOT_CONT:-/opt/graphdb/home}"
       - "${PWD}:/usr/src"
-      - "${LOCAL_GRAPH_DATA}:/data"
+      - "${LOCAL_GRAPH_DATA:-./data}:/usr/src/data"
     ports:
       - "${NB_GRAPH_PORT_HOST:-7200}:${NB_GRAPH_PORT:-7200}"
     entrypoint:
