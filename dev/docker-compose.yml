@@ -32,6 +32,7 @@ services:
       - "${LOCAL_GRAPH_DATA:-./data}:/usr/src/data"
     ports:
       - "${NB_GRAPH_PORT_HOST:-7200}:${NB_GRAPH_PORT:-7200}"
+    env_file: .env    
     entrypoint:
       - "/usr/src/setup.sh"
     working_dir: "/usr/src"
