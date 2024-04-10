@@ -144,7 +144,7 @@ venv.bak/
 dmypy.json
 
 # Neurobagel
-data-config.ttl  # RDF data configuration file, created automatically during setup from data-config_template.ttl based on .env values
+**/data-config.ttl  # RDF data configuration file, created automatically during setup from data-config_template.ttl based on .env values
 
 # Pyre type checker
 .pyre/
