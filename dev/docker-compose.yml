@@ -7,7 +7,7 @@ services:
     profiles:
       - "local_node"
       - "local_node_query"
-      - "dev"
+      - "full_stack"
     ports:
       - "${NB_NAPI_PORT_HOST:-8000}:${NB_NAPI_PORT:-8000}"
     environment:
@@ -25,7 +25,7 @@ services:
     profiles:
       - "local_node"
       - "local_node_query"
-      - "dev"
+      - "full_stack"
     volumes:
       - "${NB_GRAPH_ROOT_HOST:-~/graphdb-home}:${NB_GRAPH_ROOT_CONT:-/opt/graphdb/home}"
       - "${PWD}:/usr/src"
@@ -41,7 +41,7 @@ services:
     image: "neurobagel/federation_api:${NB_FAPI_TAG:-latest}"
     profiles:
       - "local_federation"
-      - "dev"
+      - "full_stack"
     ports:
       - "${NB_FAPI_PORT_HOST:-8080}:${NB_FAPI_PORT:-8000}"
     volumes:
@@ -54,7 +54,7 @@ services:
     profiles:
       - "local_federation"
       - "local_node_query"
-      - "dev"
+      - "full_stack"
     ports:
       - "${NB_QUERY_PORT_HOST:-3000}:5173"
     environment:
