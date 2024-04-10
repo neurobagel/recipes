@@ -146,6 +146,7 @@ dmypy.json
 # Neurobagel
 # RDF data configuration file, created automatically during setup from data-config_template.ttl based on .env values
 data-config.ttl
+local_nb_nodes.json
 
 # Pyre type checker
 .pyre/
