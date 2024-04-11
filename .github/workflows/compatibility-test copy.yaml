@@ -1,0 +1,52 @@
+name: Check compatibility of latest
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Neurobagel-latest:
+    runs-on: ubuntu-latest
+        
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Rename files
+        working-directory: ./dev
+        run: |
+          cp template.env .env
+          cp local_nb_nodes.template.json local_nb_nodes.json
+      
+      - name: Run docker compose
+        working-directory: ./dev
+        run: |
+          docker compose --profile full_stack up -d
+
+      - name: Set up node env
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      
+      - name: Install cypress
+        run: npm install
+
+      - name: wait for graph set up
+        working-directory: ./dev
+        run: |
+          while ! tail -n 0 -f ./DEPLOY.log | grep -q "Finished setting up the Neurobagel graph backend."; do
+            :
+          done
+          echo "Finished setting up the Neurobagel graph backend."
+
+      - name: Run end to end tests
+        uses: cypress-io/github-action@v6
+        with:
+          wait-on: http://localhost:3000
+          component: false
+
+      - name: Latest broke, tell someone
+        if: ${{ failure() }}
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Neurobagel latest broke! Please check https://github.com/neurobagel/recipes/actions and resolve the incompatible versions!"}' ${{ secrets.NB_SLACK_WEBHOOK }}
+
+
