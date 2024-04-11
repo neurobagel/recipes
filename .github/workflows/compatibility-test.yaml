@@ -38,6 +38,7 @@ jobs:
             :
           done
           echo "Finished setting up the Neurobagel graph backend."
+
       - name: Run end to end tests
         uses: cypress-io/github-action@v6
         with:
