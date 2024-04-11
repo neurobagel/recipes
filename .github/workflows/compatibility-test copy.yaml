@@ -1,6 +1,9 @@
 name: Check compatibility of latest
 
 on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '31 5,17 * * *'
   workflow_dispatch:
 
 jobs:
