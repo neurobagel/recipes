@@ -8,6 +8,9 @@ while ! curl --silent "localhost:${NB_GRAPH_PORT_HOST}/rest/repositories" | grep
     :
 done
 
+# TODO: Do we also want to use this elsewhere in the script or stick to ./<some_path>?
+SCRIPT_DIR=$(dirname "$0")
+
 # Logic for main setup
 main() {
     echo -e "Setting up a Neurobagel graph backend...\n"
@@ -27,7 +30,7 @@ main() {
     echo "Finished setting up the Neurobagel graph backend."
 }
 
-main 2>&1 | tee -a ./DEPLOY.log
+main 2>&1 | tee -a ${SCRIPT_DIR}/DEPLOY.log
 
 # We don't have jobcontrol here, so can't bring GraphDB back to foreground
 # instead we'll wait
