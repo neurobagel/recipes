@@ -1,0 +1,61 @@
+version: "3.8"
+
+services:
+
+  api:
+    image: "neurobagel/api:${NB_NAPI_TAG:-latest}"
+    profiles:
+      - "local_node"
+      - "local_node_query"
+      - "full_stack"
+    ports:
+      - "${NB_NAPI_PORT_HOST:-8000}:${NB_NAPI_PORT:-8000}"
+    environment:
+      NB_GRAPH_USERNAME: ${NB_GRAPH_USERNAME}
+      NB_GRAPH_PASSWORD: ${NB_GRAPH_PASSWORD}
+      NB_GRAPH_ADDRESS: ${NB_GRAPH_ADDRESS:-graph}
+      NB_GRAPH_PORT: ${NB_GRAPH_PORT:-7200}
+      NB_GRAPH_DB: ${NB_GRAPH_DB:-repositories/my_db}
+      NB_RETURN_AGG: ${NB_RETURN_AGG:-true}
+      NB_API_PORT: ${NB_NAPI_PORT:-8000}
+      NB_API_ALLOWED_ORIGINS: ${NB_NAPI_ALLOWED_ORIGINS}
+  
+  graph:
+    image: "${NB_GRAPH_IMG:-ontotext/graphdb:10.3.1}"
+    profiles:
+      - "local_node"
+      - "local_node_query"
+      - "full_stack"
+    volumes:
+      - "${NB_GRAPH_ROOT_HOST:-~/graphdb-home}:${NB_GRAPH_ROOT_CONT:-/opt/graphdb/home}"
+      - "${PWD}:/usr/src"
+      - "${LOCAL_GRAPH_DATA:-./data}:/usr/src/data"
+    ports:
+      - "${NB_GRAPH_PORT_HOST:-7200}:${NB_GRAPH_PORT:-7200}"
+    env_file: .env    
+    entrypoint:
+      - "/usr/src/setup.sh"
+    working_dir: "/usr/src"
+
+  federation:
+    image: "neurobagel/federation_api:${NB_FAPI_TAG:-latest}"
+    profiles:
+      - "local_federation"
+      - "full_stack"
+    ports:
+      - "${NB_FAPI_PORT_HOST:-8080}:${NB_FAPI_PORT:-8000}"
+    volumes:
+      - "${PWD}/local_nb_nodes.json:/usr/src/local_nb_nodes.json:ro"
+    environment:
+      NB_API_PORT: ${NB_FAPI_PORT:-8000}
+
+  query:
+    image: "neurobagel/query_tool:${NB_QUERY_TAG:-latest}"
+    profiles:
+      - "local_federation"
+      - "local_node_query"
+      - "full_stack"
+    ports:
+      - "${NB_QUERY_PORT_HOST:-3000}:5173"
+    environment:
+      NB_API_QUERY_URL: ${NB_API_QUERY_URL:-http://localhost:8000/}
