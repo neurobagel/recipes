@@ -1,9 +1,6 @@
-name: Compatibility test
+name: compatibility tests
 
 on:
-  push:
-    branches:
-      - cypress
   workflow_dispatch:
 
 jobs:
