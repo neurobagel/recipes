@@ -1,4 +1,4 @@
-name: Tech stack compatibility
+name: Compatibility test
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Run-compatibility-tests:
+  Compatibility-test:
     runs-on: ubuntu-latest
         
     steps:
@@ -32,6 +32,12 @@ jobs:
       
       - name: Install cypress
         run: npm install
+
+      - name: Wait on query tool
+        run: |
+          until $(curl --output /dev/null --silent --head --fail http://localhost:3000); do
+            :
+          done
 
       - name: Run end to end tests
         uses: cypress-io/github-action@v6
