@@ -34,6 +34,13 @@ jobs:
       - name: Install cypress
         run: npm install
 
+      - name: wait for graph set up
+        working-directory: ./dev
+        run: |
+          while ! tail -n 0 -f ./DEPLOY.log | grep -q "Finished setting up the Neurobagel graph backend."; do
+            :
+          done
+          echo "Finished setting up the Neurobagel graph backend."
       - name: Run end to end tests
         uses: cypress-io/github-action@v6
         with:
