@@ -1,6 +1,6 @@
 #!/bin/bash
 
-/opt/graphdb/dist/bin/graphdb -Dgraphdb.home=/opt/graphdb/ &
+/opt/graphdb/dist/bin/graphdb -Dgraphdb.home=${NB_GRAPH_ROOT_CONT} &
 GRAPHDB_PID=$!
 
 # Waiting for GraphDB to start
