@@ -4,7 +4,7 @@
 GRAPHDB_PID=$!
 
 # Waiting for GraphDB to start
-while ! curl --silent "localhost:${NB_GRAPH_PORT_HOST}/rest/repositories" | grep '\[\]'; do
+while ! curl --silent "localhost:${NB_GRAPH_PORT}/rest/repositories" | grep '\[\]'; do
     :
 done
 
@@ -13,18 +13,19 @@ SCRIPT_DIR=$(dirname "$0")
 
 # Logic for main setup
 main() {
-    echo -e "Setting up a Neurobagel graph backend...\n"
+    echo "Setting up a Neurobagel graph backend..."
+    echo -e "(The GraphDB server is being accessed inside the GraphDB container at http://localhost:${NB_GRAPH_PORT}.)\n"
 
     echo "Setting up GraphDB server..."
     ./graphdb_setup.sh "${NB_GRAPH_ADMIN_PASSWORD}"
     echo "Finished server setup."
 
     echo "Adding datasets to the database..."
-    ./add_data_to_graph.sh ./data localhost:${NB_GRAPH_PORT_HOST} ${NB_GRAPH_DB} "${NB_GRAPH_USERNAME}" "${NB_GRAPH_PASSWORD}"
+    ./add_data_to_graph.sh ./data localhost:${NB_GRAPH_PORT} ${NB_GRAPH_DB} "${NB_GRAPH_USERNAME}" "${NB_GRAPH_PASSWORD}"
     echo "Finished adding datasets to databases."
 
     echo "Adding Neurobagel vocabulary to the database"
-    ./add_data_to_graph.sh ./vocab localhost:${NB_GRAPH_PORT_HOST} ${NB_GRAPH_DB} "${NB_GRAPH_USERNAME}" "${NB_GRAPH_PASSWORD}"
+    ./add_data_to_graph.sh ./vocab localhost:${NB_GRAPH_PORT} ${NB_GRAPH_DB} "${NB_GRAPH_USERNAME}" "${NB_GRAPH_PASSWORD}"
     echo "Finished adding the Neurobagel vocabulary to the database."
 
     echo "Finished setting up the Neurobagel graph backend."
