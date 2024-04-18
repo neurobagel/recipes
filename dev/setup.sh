@@ -13,7 +13,8 @@ SCRIPT_DIR=$(dirname "$0")
 
 # Logic for main setup
 main() {
-    echo -e "Setting up a Neurobagel graph backend...\n"
+    echo "Setting up a Neurobagel graph backend..."
+    echo -e "(The GraphDB server is being accessed inside the GraphDB container at http://localhost:${NB_GRAPH_PORT}.)\n"
 
     echo "Setting up GraphDB server..."
     ./graphdb_setup.sh "${NB_GRAPH_ADMIN_PASSWORD}"
