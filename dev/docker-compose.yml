@@ -61,9 +61,11 @@ services:
       NB_IS_FEDERATION_API: "true"
   
   query_local:
-    extends: query_federation
+    image: "neurobagel/query_tool:${NB_QUERY_TAG:-latest}"
     profiles:
       - "local_node_query"
+    ports:
+      - "${NB_QUERY_PORT_HOST:-3000}:5173"
     environment:
       NB_API_QUERY_URL: ${NB_API_QUERY_URL}
       NB_IS_FEDERATION_API: "false"
