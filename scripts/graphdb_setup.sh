@@ -128,12 +128,12 @@ echo "Environment variables have been set from ${ENV_FILE_PATH}."
 
 # Extract just the database name
 DB_NAME="${NB_GRAPH_DB#repositories/}"
-NB_GRAPH_PORT_HOST=${NB_GRAPH_PORT_HOST:-7200}
+NB_GRAPH_PORT=${NB_GRAPH_PORT:-7200}
 
 # Get the directory of this script to be able to find the data-config_template.ttl file
 SCRIPT_DIR=$(dirname "$0")
 
-echo "The GraphDB server is being accessed at http://localhost:${NB_GRAPH_PORT_HOST}."
+echo "The GraphDB server is being accessed at http://localhost:${NB_GRAPH_PORT}."
 
 ##### First time GraphDB setup #####
 
@@ -143,14 +143,14 @@ if [ "${RUN_USER_SETUP}" = "on" ]; then
     # 1. Change database admin password
     echo "Changing the admin password (note: if you have previously set the admin password, this has no effect)..."
 	# TODO: To change a *previously set* admin password, we need to also provide the current password via -u
-    curl -X PATCH --header 'Content-Type: application/json' http://localhost:${NB_GRAPH_PORT_HOST}/rest/security/users/admin -d "{\"password\": \""${ADMIN_PASS}"\"}"
+    curl -X PATCH --header 'Content-Type: application/json' http://localhost:${NB_GRAPH_PORT}/rest/security/users/admin -d "{\"password\": \""${ADMIN_PASS}"\"}"
     
 	# 2. If security is not enabled, enable it (i.e. allow only authenticated users access)
-	is_security_enabled=$(curl -s -X GET http://localhost:${NB_GRAPH_PORT_HOST}/rest/security)
+	is_security_enabled=$(curl -s -X GET http://localhost:${NB_GRAPH_PORT}/rest/security)
 	if [ "${is_security_enabled}" = "false" ]; then
 		echo "Enabling password-based access control to all databases ..."
 		# NOTE: This command fails without credentials once security is enabled
-		curl -X POST --header 'Content-Type: application/json' -d true http://localhost:${NB_GRAPH_PORT_HOST}/rest/security
+		curl -X POST --header 'Content-Type: application/json' -d true http://localhost:${NB_GRAPH_PORT}/rest/security
 	else
 		echo "Password-based access control has already been enabled."
 	fi
@@ -159,7 +159,7 @@ if [ "${RUN_USER_SETUP}" = "on" ]; then
 	# TODO: Separate this out from the first-time setup? As this can technically be run at any time to create additional users.
 	# NOTE: If user already exists, response will be "An account with the given username already exists." OK for script.
 	echo "Creating a new database user ${NB_GRAPH_USERNAME}..."
-    curl -X POST --header 'Content-Type: application/json' -u "admin:${ADMIN_PASS}" -d @- http://localhost:${NB_GRAPH_PORT_HOST}/rest/security/users/${NB_GRAPH_USERNAME} <<EOF
+    curl -X POST --header 'Content-Type: application/json' -u "admin:${ADMIN_PASS}" -d @- http://localhost:${NB_GRAPH_PORT}/rest/security/users/${NB_GRAPH_USERNAME} <<EOF
     {
         "username": "${NB_GRAPH_USERNAME}",
         "password": "${NB_GRAPH_PASSWORD}"
@@ -178,22 +178,22 @@ sed 's/rep:repositoryID "my_db" ;/rep:repositoryID "'"${DB_NAME}"'" ;/' ${SCRIPT
 # 5. Create a new database
 # Assumes data-config.ttl is in the same directory as this script!
 echo "Creating the GraphDB database ${DB_NAME}..."
-curl -X PUT -u "admin:${ADMIN_PASS}" http://localhost:${NB_GRAPH_PORT_HOST}/${NB_GRAPH_DB} --data-binary "@data-config.ttl" -H "Content-Type: application/x-turtle"
+curl -X PUT -u "admin:${ADMIN_PASS}" http://localhost:${NB_GRAPH_PORT}/${NB_GRAPH_DB} --data-binary "@data-config.ttl" -H "Content-Type: application/x-turtle"
 
 # 6. Grant newly created user access permission to the database
 # Confirm user wants to proceed with changing user permissions
-while true; do
-	read -p "WARNING: We will now give ${NB_GRAPH_USERNAME} read/write access to ${NB_GRAPH_DB}. This operation will REPLACE any existing permissions you have granted to user ${NB_GRAPH_USERNAME}, including any access to other databases. ${NB_GRAPH_USERNAME} may lose access to other databases as a result. Proceed? (y/n) " yn
-	case $yn in
-		[Yy]* ) break;;
-		[Nn]* ) echo "Exiting..."; exit;;
-		* ) echo "Please answer y or n.";;
-	esac
-done
+# while true; do
+# 	read -p "WARNING: We will now give ${NB_GRAPH_USERNAME} read/write access to ${NB_GRAPH_DB}. This operation will REPLACE any existing permissions you have granted to user ${NB_GRAPH_USERNAME}, including any access to other databases. ${NB_GRAPH_USERNAME} may lose access to other databases as a result. Proceed? (y/n) " yn
+# 	case $yn in
+# 		[Yy]* ) break;;
+# 		[Nn]* ) echo "Exiting..."; exit;;
+# 		* ) echo "Please answer y or n.";;
+# 	esac
+# done
 
 echo "Granting user ${NB_GRAPH_USERNAME} read/write permissions to database ${DB_NAME}..."
 curl -X PUT --header 'Content-Type: application/json' -d "
-{\"grantedAuthorities\": [\"WRITE_REPO_${DB_NAME}\",\"READ_REPO_${DB_NAME}\"]}" http://localhost:${NB_GRAPH_PORT_HOST}/rest/security/users/${NB_GRAPH_USERNAME} -u "admin:${ADMIN_PASS}"
+{\"grantedAuthorities\": [\"WRITE_REPO_${DB_NAME}\",\"READ_REPO_${DB_NAME}\"]}" http://localhost:${NB_GRAPH_PORT}/rest/security/users/${NB_GRAPH_USERNAME} -u "admin:${ADMIN_PASS}"
 
 echo "Done."
 
