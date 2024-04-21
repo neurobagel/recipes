@@ -28,14 +28,23 @@ services:
       - "full_stack"
     volumes:
       - "${NB_GRAPH_ROOT_HOST:-~/graphdb-home}:${NB_GRAPH_ROOT_CONT:-/opt/graphdb/home}"
-      - "${PWD}:/usr/src"
+      - "./scripts:/usr/src/neurobagel/scripts"
+      - ".env:/usr/src/neurobagel/.env"
+      - "./vocab:/usr/src/neurobagel/vocab"
       - "${LOCAL_GRAPH_DATA:-./data}:/data"
     ports:
       - "${NB_GRAPH_PORT_HOST:-7200}:${NB_GRAPH_PORT:-7200}"
-    env_file: .env    
+    environment:
+      NB_GRAPH_ROOT_CONT: ${NB_GRAPH_ROOT_CONT:-/opt/graphdb/home}
+      NB_GRAPH_ADMIN_PASSWORD: ${NB_GRAPH_ADMIN_PASSWORD}
+      NB_GRAPH_USERNAME: ${NB_GRAPH_USERNAME}
+      NB_GRAPH_PASSWORD: ${NB_GRAPH_PASSWORD}
+      NB_GRAPH_ADDRESS: ${NB_GRAPH_ADDRESS:-graph}
+      NB_GRAPH_PORT: ${NB_GRAPH_PORT:-7200}
+      NB_GRAPH_DB: ${NB_GRAPH_DB:-repositories/my_db}
     entrypoint:
-      - "/usr/src/setup.sh"
-    working_dir: "/usr/src"
+      - "/usr/src/neurobagel/scripts/setup.sh"
+    working_dir: "/usr/src/neurobagel/scripts"
 
   federation:
     image: "neurobagel/federation_api:${NB_FAPI_TAG:-latest}"
@@ -45,7 +54,7 @@ services:
     ports:
       - "${NB_FAPI_PORT_HOST:-8080}:${NB_FAPI_PORT:-8000}"
     volumes:
-      - "${PWD}/local_nb_nodes.json:/usr/src/local_nb_nodes.json:ro"
+      - "./local_nb_nodes.json:/usr/src/local_nb_nodes.json:ro"
     environment:
       NB_API_PORT: ${NB_FAPI_PORT:-8000}
 
