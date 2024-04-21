@@ -12,14 +12,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Rename files
-        working-directory: ./dev
+        working-directory: .
         run: |
           cp template.env .env
           cp local_nb_nodes.template.json local_nb_nodes.json
           sed -i 's/latest/nightly/g' .env
       
       - name: Run docker compose
-        working-directory: ./dev
+        working-directory: .
         run: |
           docker compose --profile full_stack up -d
 
@@ -32,9 +32,9 @@ jobs:
         run: npm install
 
       - name: wait for graph set up
-        working-directory: ./dev
+        working-directory: ./scripts
         run: |
-          while ! tail -n 0 -f ./DEPLOY.log | grep -q "Finished setting up the Neurobagel graph backend."; do
+          while ! tail -n 0 -f ./logs/DEPLOY.log | grep -q "Finished setting up the Neurobagel graph backend."; do
             :
           done
           echo "Finished setting up the Neurobagel graph backend."
