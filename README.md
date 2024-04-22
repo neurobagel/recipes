@@ -7,21 +7,21 @@ For detailed instructions on the deployment options for Neurobagel, see the offi
 ### Using the full-stack Docker Compose file
 
 1. Clone the repository
-```bash
-git clone https://github.com/neurobagel/recipes.git
-```
+    ```bash
+    git clone https://github.com/neurobagel/recipes.git
+    ```
 
 2. Copy and rename the required template configuration files
-```bash
-cp template.env .env
+    ```bash
+    cp template.env .env
 
-# if also setting up local federation
-cp local_nb_nodes.template.json local_nb_nodes.json
-```
+    # if also setting up local federation
+    cp local_nb_nodes.template.json local_nb_nodes.json
+    ```
 
-* Ensure to edit the configuration file(s) according to your deployment.
+    Ensure to edit the configuration file(s) according to your deployment.
 
-* :warning: **Note**: You **must** change the value of the `NB_API_QUERY_URL` variable in the `.env` file before you can launch any service stack that includes a query tool (i.e., `local_node_query`, `full_stack`). 
+    :warning: **Note**: You **must** change the value of the `NB_API_QUERY_URL` variable in the `.env` file before you can launch any service stack that includes a query tool (i.e., `local_node_query`, `full_stack`). 
 See comments in the `.env` file for more information.
 
 3. In the repository root, start the Docker Compose stack and specify your desired deployment profile
