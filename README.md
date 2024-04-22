@@ -19,7 +19,8 @@ cp template.env .env
 cp local_nb_nodes.template.json local_nb_nodes.json
 ```
 Ensure to edit the configuration file(s) according to your deployment.
-
+**Note**: You **must** change the value of the `NB_API_QUERY_URL` variable in the `.env` file before you can launch any service stack that includes a query tool (i.e., `local_node_query`, `full_stack`)
+See comments in the `.env` file for more information.
 3. In the repository root, start the Docker Compose stack and specify your desired deployment profile
 
     **To set up only a local node:**
