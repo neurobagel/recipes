@@ -21,7 +21,7 @@ For detailed instructions on the deployment options for Neurobagel, see the offi
 
     Ensure to edit the configuration file(s) according to your deployment.
 
-    :warning: **Note**: You **must** change the value of the `NB_API_QUERY_URL` variable in the `.env` file before you can launch any service stack that includes a query tool (i.e., `local_node_query`, `full_stack`). 
+    :warning: **Note**: You **must** change the value of the `NB_API_QUERY_URL` variable in the `.env` file before you can launch any service stack that includes a query tool (i.e., `local_node_query`, `full_stack`, `local_federation`). 
 See comments in the `.env` file for more information.
 
 3. In the repository root, start the Docker Compose stack and specify your desired deployment profile
@@ -40,8 +40,16 @@ See comments in the `.env` file for more information.
     docker compose --profile local_node_query up -d
     ```
 
-    **To set up a local node and local federation (including a graphical query tool):**
+    **To set up a local node and local federation (including a graphical query tool) all at once:**
     ```bash
     docker compose --profile full_stack up -d
     ```
+
+    **To set up federation only:**
+    
+    You may want to do this if you already have local or remote node(s) set up that you now want to send federated queries to.
+    ```bash
+    docker compose --profile local_federation up -d
+    ```
+
 A log file `DEPLOY.log` will be automatically created under `scripts/logs/` with a copy of the STDOUT from the automatic deployment process.

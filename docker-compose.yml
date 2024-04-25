@@ -12,14 +12,19 @@ services:
       - "${NB_NAPI_PORT_HOST:-8000}:${NB_NAPI_PORT:-8000}"
     environment:
       NB_GRAPH_USERNAME: ${NB_GRAPH_USERNAME}
-      NB_GRAPH_PASSWORD: ${NB_GRAPH_PASSWORD}
       NB_GRAPH_ADDRESS: ${NB_GRAPH_ADDRESS:-graph}
       NB_GRAPH_PORT: ${NB_GRAPH_PORT:-7200}
       NB_GRAPH_DB: ${NB_GRAPH_DB:-repositories/my_db}
       NB_RETURN_AGG: ${NB_RETURN_AGG:-true}
       NB_API_PORT: ${NB_NAPI_PORT:-8000}
       NB_API_ALLOWED_ORIGINS: ${NB_NAPI_ALLOWED_ORIGINS}
-  
+    volumes:
+      - "./scripts/api_entrypoint.sh:/usr/src/api_entrypoint.sh"
+    entrypoint:
+      - "/usr/src/api_entrypoint.sh"
+    secrets:
+      - db_user_password
+
   graph:
     image: "${NB_GRAPH_IMG:-ontotext/graphdb:10.3.1}"
     profiles:
@@ -36,15 +41,16 @@ services:
       - "${NB_GRAPH_PORT_HOST:-7200}:${NB_GRAPH_PORT:-7200}"
     environment:
       NB_GRAPH_ROOT_CONT: ${NB_GRAPH_ROOT_CONT:-/opt/graphdb/home}
-      NB_GRAPH_ADMIN_PASSWORD: ${NB_GRAPH_ADMIN_PASSWORD}
       NB_GRAPH_USERNAME: ${NB_GRAPH_USERNAME}
-      NB_GRAPH_PASSWORD: ${NB_GRAPH_PASSWORD}
       NB_GRAPH_ADDRESS: ${NB_GRAPH_ADDRESS:-graph}
       NB_GRAPH_PORT: ${NB_GRAPH_PORT:-7200}
       NB_GRAPH_DB: ${NB_GRAPH_DB:-repositories/my_db}
     entrypoint:
       - "/usr/src/neurobagel/scripts/setup.sh"
     working_dir: "/usr/src/neurobagel/scripts"
+    secrets:
+      - db_admin_password
+      - db_user_password
 
   federation:
     image: "neurobagel/federation_api:${NB_FAPI_TAG:-latest}"
@@ -78,3 +84,9 @@ services:
     environment:
       NB_API_QUERY_URL: ${NB_API_QUERY_URL}
       NB_IS_FEDERATION_API: "false"
+
+secrets:
+  db_admin_password:
+    environment: "NB_GRAPH_ADMIN_PASSWORD"
+  db_user_password:
+    environment: "NB_GRAPH_PASSWORD"
