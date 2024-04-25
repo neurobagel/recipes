@@ -12,6 +12,9 @@ done
 SCRIPT_DIR=$(dirname "$0")
 mkdir -p ${SCRIPT_DIR}/logs
 
+export NB_GRAPH_ADMIN_PASSWORD=$(cat /run/secrets/db_admin_password)
+export NB_GRAPH_PASSWORD=$(cat /run/secrets/db_user_password)
+
 # Logic for main setup
 main() {
     echo "Setting up a Neurobagel graph backend..."
