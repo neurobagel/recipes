@@ -1,0 +1,126 @@
+name: Compatibility of
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '21 5,17 * * *'
+
+jobs:
+  latest:
+    runs-on: ubuntu-latest
+        
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Rename files
+        working-directory: .
+        run: |
+          cp template.env .env
+          cp local_nb_nodes.template.json local_nb_nodes.json
+          sed -i 's/latest/nightly/g' .env
+      
+      - name: Run docker compose
+        working-directory: .
+        run: |
+          docker compose --profile full_stack up -d
+
+      - name: Set up node env
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      
+      - name: Install cypress
+        run: npm install
+
+      - name: wait for graph set up
+        working-directory: ./scripts
+        run: |
+          # The logs are written at the end of the setup at the moment, so we have to wait for the file to exist
+          while [ ! -f ./logs/DEPLOY.log ]; do
+            :
+          done
+          # Once the file is there, we want to wait for the message that the setup is done
+          echo "We think the file exists now!"
+          while ! tail -n 0 -f ./logs/DEPLOY.log | grep -q "Finished setting up the Neurobagel graph backend."; do
+            :
+          done
+          echo "Finished setting up the Neurobagel graph backend."
+
+      - name: Run end to end tests
+        uses: cypress-io/github-action@v6
+        with:
+          wait-on: http://localhost:3000
+          component: false
+
+      - name: Clean up again
+        working-directory: .
+        run: |
+          docker compose --profile full_stack down
+
+      - name: Latest broke, tell someone
+        if: ${{ failure() }}
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Neurobagel latest broke! Please check https://github.com/neurobagel/recipes/actions and resolve the incompatible versions!"}' ${{ secrets.NB_SLACK_WEBHOOK }}
+
+      - name: Clean up again
+        working-directory: .
+        run: |
+          docker compose --profile full_stack down
+
+  nightly:
+    runs-on: ubuntu-latest
+        
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Rename files
+        working-directory: .
+        run: |
+          cp template.env .env
+          cp local_nb_nodes.template.json local_nb_nodes.json
+          sed -i 's/latest/nightly/g' .env
+      
+      - name: Run docker compose
+        working-directory: .
+        run: |
+          docker compose --profile full_stack up -d
+
+      - name: Set up node env
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      
+      - name: Install cypress
+        run: npm install
+
+      - name: wait for graph set up
+        working-directory: ./scripts
+        run: |
+          # The logs are written at the end of the setup at the moment, so we have to wait for the file to exist
+          while [ ! -f ./logs/DEPLOY.log ]; do
+            :
+          done
+          # Once the file is there, we want to wait for the message that the setup is done
+          echo "We think the file exists now!"
+          while ! tail -n 0 -f ./logs/DEPLOY.log | grep -q "Finished setting up the Neurobagel graph backend."; do
+            :
+          done
+          echo "Finished setting up the Neurobagel graph backend."
+
+      - name: Run end to end tests
+        uses: cypress-io/github-action@v6
+        with:
+          wait-on: http://localhost:3000
+          component: false
+
+      - name: Latest broke, tell someone
+        if: ${{ failure() }}
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Neurobagel nightly is incompatible!"}' ${{ secrets.NB_SLACK_WEBHOOK }}
+
+      - name: Clean up again
+        working-directory: .
+        run: |
+          docker compose --profile full_stack down
