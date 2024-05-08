@@ -58,10 +58,10 @@ jobs:
         run: |
           docker compose --profile full_stack down
 
-      - name: Latest broke, tell someone
+      - name: Latest failed, tell someone
         if: ${{ failure() }}
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"Neurobagel latest broke! Please check https://github.com/neurobagel/recipes/actions and resolve the incompatible versions!"}' ${{ secrets.NB_SLACK_WEBHOOK }}
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Neurobagel latest version compatibility test failed! Please check https://github.com/neurobagel/recipes/actions and resolve the incompatible versions!"}' ${{ secrets.NB_SLACK_WEBHOOK }}
 
       - name: Clean up again
         working-directory: .
@@ -115,12 +115,12 @@ jobs:
           wait-on: http://localhost:3000
           component: false
 
-      - name: Latest broke, tell someone
+      - name: Nightly failed, tell someone
         if: ${{ failure() }}
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"Neurobagel nightly is incompatible!"}' ${{ secrets.NB_SLACK_WEBHOOK }}
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Neurobagel nightly version compatibility test failed!"}' ${{ secrets.NB_SLACK_WEBHOOK }}
 
-      - name: Clean up again
+      - name: Clean up
         working-directory: .
         run: |
           docker compose --profile full_stack down
