@@ -14,7 +14,7 @@ describe('Full stack e2e', () => {
     });
   });
   it("Federation API", () => {
-    cy.request("localhost:8000/query/?node=local graph 1").as("query");
+    cy.request("localhost:8080/query/?node=http://api:8000/").as("query");
     cy.get("@query").should((response) => {
       expect(response.status).to.eq(200);
     });
