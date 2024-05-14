@@ -25,7 +25,7 @@ main() {
     echo "Finished server setup."
 
     echo "Adding datasets to the database..."
-    ./add_data_to_graph.sh /data localhost:${NB_GRAPH_PORT} ${NB_GRAPH_DB} "${NB_GRAPH_USERNAME}" "${NB_GRAPH_PASSWORD}"
+    ./add_data_to_graph.sh /data localhost:${NB_GRAPH_PORT} ${NB_GRAPH_DB} "${NB_GRAPH_USERNAME}" "${NB_GRAPH_PASSWORD}" --clear-data
     echo "Finished adding datasets to databases."
 
     echo "Adding Neurobagel vocabulary to the database"
