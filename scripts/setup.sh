@@ -3,17 +3,17 @@
 /opt/graphdb/dist/bin/graphdb -Dgraphdb.home=${NB_GRAPH_ROOT_CONT} &
 GRAPHDB_PID=$!
 
+export NB_GRAPH_ADMIN_PASSWORD=$(cat /run/secrets/db_admin_password)
+export NB_GRAPH_PASSWORD=$(cat /run/secrets/db_user_password)
+
 # Waiting for GraphDB to start
-while ! curl --silent "localhost:${NB_GRAPH_PORT}/rest/repositories" | grep '\['; do
+while ! curl --silent "localhost:${NB_GRAPH_PORT}/rest/repositories" -u "${NB_GRAPH_USERNAME}:${NB_GRAPH_PASSWORD}" | grep '\['; do
     :
 done
 
 # TODO: Do we also want to use this elsewhere in the script or stick to ./<some_path>?
 SCRIPT_DIR=$(dirname "$0")
 mkdir -p ${SCRIPT_DIR}/logs
-
-export NB_GRAPH_ADMIN_PASSWORD=$(cat /run/secrets/db_admin_password)
-export NB_GRAPH_PASSWORD=$(cat /run/secrets/db_user_password)
 
 # Logic for main setup
 main() {
