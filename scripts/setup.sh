@@ -4,7 +4,7 @@
 GRAPHDB_PID=$!
 
 # Waiting for GraphDB to start
-while ! curl --silent "localhost:${NB_GRAPH_PORT}/rest/repositories" | grep '\[\]'; do
+while ! curl --silent "localhost:${NB_GRAPH_PORT}/rest/repositories" | grep '\['; do
     :
 done
 
