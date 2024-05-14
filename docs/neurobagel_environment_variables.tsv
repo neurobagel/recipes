@@ -15,8 +15,6 @@ Environment variable	Set manually in .env?	Description	Default value if not set	
 `NB_FAPI_PORT`	No	Port number on which to run the Neurobagel federation API _in the API container_	`8000`	Docker
 `NB_GRAPH_IMG`	No	Graph server Docker image	`ontotext/graphdb:10.3.1`	Docker
 `NB_GRAPH_ADDRESS`	No	IP address for the graph database (or container name, if graph is hosted locally)	`206.12.99.17 (graph)` **	Docker, Python
-`NB_GRAPH_ROOT_HOST`	No	Path to directory on the _host machine_ to store graph database files and data (directory does not have to exist beforehand).	`~/graphdb-home`	Docker
-`NB_GRAPH_ROOT_CONT`	No	Path to directory for graph databases in the _graph server container_	`/opt/graphdb/home` *	Docker
 `NB_GRAPH_PORT_HOST`	No	Port number on the _host machine_ to map the graph server container port to	`7200`	Docker
 `NB_GRAPH_PORT`	No	Port number used by the _graph server container_	`7200` *	Docker, Python
 `NB_QUERY_TAG`	No	Docker image tag for the query tool	`latest`	Docker

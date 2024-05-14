@@ -1,6 +1,6 @@
 #!/bin/bash
 
-/opt/graphdb/dist/bin/graphdb -Dgraphdb.home=${NB_GRAPH_ROOT_CONT} &
+/opt/graphdb/dist/bin/graphdb -Dgraphdb.home=/opt/graphdb/home &
 GRAPHDB_PID=$!
 
 export NB_GRAPH_ADMIN_PASSWORD=$(cat /run/secrets/db_admin_password)
