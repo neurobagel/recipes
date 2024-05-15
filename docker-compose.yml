@@ -32,7 +32,7 @@ services:
       - "local_node_query"
       - "full_stack"
     volumes:
-      - "graph_data:/opt/graphdb/home"
+      - "graphdb_home:/opt/graphdb/home"
       - "./scripts:/usr/src/neurobagel/scripts"
       - ".env:/usr/src/neurobagel/.env"
       - "./vocab:/usr/src/neurobagel/vocab"
@@ -91,4 +91,4 @@ secrets:
     environment: "NB_GRAPH_PASSWORD"
 
 volumes:
-  graph_data:
+  graphdb_home:
