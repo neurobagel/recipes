@@ -11,6 +11,16 @@ while ! curl --silent "localhost:${NB_GRAPH_PORT}/rest/repositories" -u "${NB_GR
     :
 done
 
+# We need to figure out if this is the first time the setup has been run
+repo_response=$(curl --silent "localhost:${NB_GRAPH_PORT}/rest/repositories" -u "${NB_GRAPH_USERNAME}:${NB_GRAPH_PASSWORD}")
+if [ "${repo_response}" = "[]" ]; then
+    export FIRST_TIME_SETUP="on"
+else
+    export FIRST_TIME_SETUP="off"
+fi
+
+echo "First time setup: ${FIRST_TIME_SETUP}"
+
 # TODO: Do we also want to use this elsewhere in the script or stick to ./<some_path>?
 SCRIPT_DIR=$(dirname "$0")
 mkdir -p ${SCRIPT_DIR}/logs
@@ -20,9 +30,13 @@ main() {
     echo "Setting up a Neurobagel graph backend..."
     echo -e "(The GraphDB server is being accessed inside the GraphDB container at http://localhost:${NB_GRAPH_PORT}.)\n"
 
-    echo "Setting up GraphDB server..."
-    ./graphdb_setup.sh --env-file-path /usr/src/neurobagel/.env "${NB_GRAPH_ADMIN_PASSWORD}"
-    echo "Finished server setup."
+    if [ "${FIRST_TIME_SETUP}" = "on" ]; then
+        echo "Setting up GraphDB server..."
+        ./graphdb_setup.sh --env-file-path /usr/src/neurobagel/.env "${NB_GRAPH_ADMIN_PASSWORD}"
+        echo "Finished server setup."export FIRST_TIME_SETUP="on"
+    else
+        echo "GraphDB server already set up, skipping setup."
+    fi
 
     echo "Adding datasets to the database..."
     ./add_data_to_graph.sh /data localhost:${NB_GRAPH_PORT} ${NB_GRAPH_DB} "${NB_GRAPH_USERNAME}" "${NB_GRAPH_PASSWORD}" --clear-data
