@@ -3,6 +3,7 @@
 /opt/graphdb/dist/bin/graphdb -Dgraphdb.home=/opt/graphdb/home &
 GRAPHDB_PID=$!
 
+# TODO revisit/test this also once we document how users can change (in addition to the data files being uploaded) the variables to set up a non-tester database after a first-time deployment
 export NB_GRAPH_ADMIN_PASSWORD=$(cat /run/secrets/db_admin_password)
 export NB_GRAPH_PASSWORD=$(cat /run/secrets/db_user_password)
 
