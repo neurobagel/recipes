@@ -19,3 +19,4 @@ Environment variable	Set manually in .env?	Description	Default value if not set	
 `NB_GRAPH_PORT`	No	Port number used by the _graph server container_	`7200` *	Docker, Python
 `NB_QUERY_TAG`	No	Docker image tag for the query tool	`latest`	Docker
 `NB_QUERY_PORT_HOST`	No	Port number used by the `query_tool` on the host machine	`3000`	Docker
+`NB_FEDERATE_REMOTE_PUBLIC_NODES`	Yes 	Federate over the remote public nodes	`true`	Docker, Python
