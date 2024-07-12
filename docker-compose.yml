@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
 
   api:
@@ -62,6 +60,9 @@ services:
       - "./local_nb_nodes.json:/usr/src/local_nb_nodes.json:ro"
     environment:
       NB_API_PORT: ${NB_FAPI_PORT:-8000}
+      NB_FEDERATE_REMOTE_PUBLIC_NODES: ${NB_FEDERATE_REMOTE_PUBLIC_NODES:-True}
+      NB_ENABLE_AUTH: ${NB_ENABLE_AUTH:-true}
+      NB_QUERY_CLIENT_ID: ${NB_QUERY_CLIENT_ID}
 
   query_federation:
     image: "neurobagel/query_tool:${NB_QUERY_TAG:-latest}"
@@ -73,6 +74,8 @@ services:
     environment:
       NB_API_QUERY_URL: ${NB_API_QUERY_URL}
       NB_IS_FEDERATION_API: "true"
+      NB_ENABLE_AUTH: ${NB_ENABLE_AUTH:-true}
+      NB_QUERY_CLIENT_ID: ${NB_QUERY_CLIENT_ID}
   
   query_local:
     image: "neurobagel/query_tool:${NB_QUERY_TAG:-latest}"
