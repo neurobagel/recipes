@@ -62,6 +62,7 @@ services:
       - "./local_nb_nodes.json:/usr/src/local_nb_nodes.json:ro"
     environment:
       NB_API_PORT: ${NB_FAPI_PORT:-8000}
+      NB_FEDERATE_REMOTE_PUBLIC_NODES: ${NB_FEDERATE_REMOTE_PUBLIC_NODES:-True}
 
   query_federation:
     image: "neurobagel/query_tool:${NB_QUERY_TAG:-latest}"
