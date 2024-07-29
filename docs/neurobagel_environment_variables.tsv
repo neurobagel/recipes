@@ -20,5 +20,5 @@ Environment variable	Set manually in .env?	Description	Default value if not set	
 `NB_QUERY_TAG`	No	Docker image tag for the query tool	`latest`	Docker
 `NB_QUERY_PORT_HOST`	No	Port number used by the `query_tool` on the host machine	`3000`	Docker
 `NB_FEDERATE_REMOTE_PUBLIC_NODES`	Yes 	If "True", include public nodes in federation	`true`	Docker, Python
-`NB_ENABLE_AUTH`	Yes	**(Experimental, for dev deployments only)** Whether to enable authentication for cohort queries. One of [true, false]	`true`	Docker, Python
+`NB_ENABLE_AUTH`	Yes	**(Experimental, for dev deployments only)** Whether to enable authentication for cohort queries. One of [true, false]	`false`	Docker, Python
 `NB_QUERY_CLIENT_ID`	Yes	**(Experimental, for dev deployments only)** OAuth client ID for the query tool. Required if NB_ENABLE_AUTH is set to true.	-	Docker, Python
