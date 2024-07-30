@@ -76,6 +76,7 @@ services:
     environment:
       NB_API_QUERY_URL: ${NB_API_QUERY_URL}
       NB_IS_FEDERATION_API: "true"
+      NB_QUERY_URL_PATH: ${NB_QUERY_URL_PATH:-/}
       NB_ENABLE_AUTH: ${NB_ENABLE_AUTH:-false}
       NB_QUERY_CLIENT_ID: ${NB_QUERY_CLIENT_ID}
   
@@ -88,6 +89,7 @@ services:
     environment:
       NB_API_QUERY_URL: ${NB_API_QUERY_URL}
       NB_IS_FEDERATION_API: "false"
+      NB_QUERY_URL_PATH: ${NB_QUERY_URL_PATH:-/}
       NB_ENABLE_AUTH: ${NB_ENABLE_AUTH:-false}
       NB_QUERY_CLIENT_ID: ${NB_QUERY_CLIENT_ID}
 
