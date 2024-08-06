@@ -26,7 +26,7 @@ See comments in the `.env` file for more information.
 
 3. In the repository root, start the Docker Compose stack and specify your desired deployment profile
 
-    **To set up only a local node:**
+    **To set up only a local node (without a graphical query tool):**
     ```bash
     docker compose up -d
     ```
