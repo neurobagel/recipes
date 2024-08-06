@@ -21,7 +21,7 @@ For detailed instructions on the deployment options for Neurobagel, see the offi
 
     Ensure to edit the configuration file(s) according to your deployment.
 
-    :warning: **Note**: You **must** change the value of the `NB_API_QUERY_URL` variable in the `.env` file before you can launch any service stack that includes a query tool (i.e., `local_node_query`, `full_stack`, `local_federation`). 
+    :warning: **Note**: You **must** change the value of the `NB_API_QUERY_URL` variable in the `.env` file before you can launch any service stack that includes a query tool (i.e., `full_stack`, `local_federation`). 
 See comments in the `.env` file for more information.
 
 3. In the repository root, start the Docker Compose stack and specify your desired deployment profile
@@ -33,11 +33,6 @@ See comments in the `.env` file for more information.
     or
     ```bash
     docker compose --profile local_node up -d
-    ```
-
-    **To set up a local node with a graphical query tool:**
-    ```bash
-    docker compose --profile local_node_query up -d
     ```
 
     **To set up a local node and local federation (including a graphical query tool) all at once:**
