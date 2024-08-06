@@ -35,7 +35,7 @@ See comments in the `.env` file for more information.
     docker compose --profile local_node up -d
     ```
 
-    **To set up a local node and local federation (including a graphical query tool) all at once:**
+    **To set up a local node along with a graphical query tool and optional federation:**
     ```bash
     docker compose --profile full_stack up -d
     ```
