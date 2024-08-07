@@ -2,7 +2,7 @@
 Configuration files for a Neurobagel deployment.
 
 ## How to use
-For detailed instructions on the deployment options for Neurobagel, see the official Neurobagel documentation on [setting up a local knowledge graph (node)](https://neurobagel.org/infrastructure/) and [local query federation](https://neurobagel.org/federate/).
+For detailed instructions on the deployment options for Neurobagel, see the official Neurobagel documentation on [setting up a local knowledge graph (node)](https://neurobagel.org/getting_started/) and [local query federation](https://neurobagel.org/config/).
 
 ### Using the full-stack Docker Compose file
 
