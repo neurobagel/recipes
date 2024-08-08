@@ -51,6 +51,12 @@ jobs:
         with:
           wait-on: http://localhost:3000
           component: false
+      
+      - name: Upload Cypress screenshots as artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
 
       - name: Latest failed, tell someone
         if: ${{ failure() }}

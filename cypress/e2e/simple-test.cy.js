@@ -5,7 +5,9 @@ describe('Full stack e2e', () => {
       'local graph 1{downarrow}{enter}'
     );
     cy.get('[data-cy="submit-query-button"]').click();
+    cy.screenshot()
     cy.get('[data-cy="result-container"]').contains("from Local graph 1",{matchCase: false});
+    cy.screenshot()
   })
   it('API', () => {
     cy.request("localhost:8000/query").as("query");
