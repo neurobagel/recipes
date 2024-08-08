@@ -1,4 +1,4 @@
-name: Compatibility of
+name: Tool version compatibility test
 
 on:
   workflow_dispatch:
