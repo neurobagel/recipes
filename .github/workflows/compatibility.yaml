@@ -81,6 +81,11 @@ jobs:
           cp local_nb_nodes.template.json local_nb_nodes.json
           sed -i 's/latest/nightly/g' .env
       
+      - name: Edit NB_API_QUERY_URL env var
+        working-directory: .
+        run: |
+          sed -i 's|^NB_API_QUERY_URL=.*|NB_API_QUERY_URL=http://localhost:8080|g' .env
+      
       - name: Run docker compose
         working-directory: .
         run: |
