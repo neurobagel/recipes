@@ -1,5 +1,11 @@
+<div align="center">
 # recipes
 Configuration files for a Neurobagel deployment.
+
+<a href="https://github.com/neurobagel/recipes/actions/workflows/compatibility.yaml">
+        <img src="https://img.shields.io/github/actions/workflow/status/neurobagel/query-tool/component-test.yaml?color=8FBC8F&label=Tool version compatibility test&style=flat-square" alt="Tool version compatibility test">
+    </a>
+</div>
 
 ## How to use
 For detailed instructions on deploying Neurobagel for your use case, see the official Neurobagel documentation on [setting up a local knowledge graph (node)](https://neurobagel.org/getting_started/) and [configuration options](https://neurobagel.org/config/).
