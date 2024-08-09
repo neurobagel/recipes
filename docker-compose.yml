@@ -4,7 +4,6 @@ services:
     image: "neurobagel/api:${NB_NAPI_TAG:-latest}"
     profiles:
       - "local_node"
-      - "local_node_query"
       - "full_stack"
     ports:
       - "${NB_NAPI_PORT_HOST:-8000}:${NB_NAPI_PORT:-8000}"
@@ -29,7 +28,6 @@ services:
     image: "${NB_GRAPH_IMG:-ontotext/graphdb:10.3.1}"
     profiles:
       - "local_node"
-      - "local_node_query"
       - "full_stack"
     volumes:
       - "graphdb_home:/opt/graphdb/home"
@@ -75,20 +73,6 @@ services:
       - "${NB_QUERY_PORT_HOST:-3000}:5173"
     environment:
       NB_API_QUERY_URL: ${NB_API_QUERY_URL}
-      NB_IS_FEDERATION_API: "true"
-      NB_QUERY_APP_BASE_PATH: ${NB_QUERY_APP_BASE_PATH:-/}
-      NB_ENABLE_AUTH: ${NB_ENABLE_AUTH:-false}
-      NB_QUERY_CLIENT_ID: ${NB_QUERY_CLIENT_ID}
-  
-  query_local:
-    image: "neurobagel/query_tool:${NB_QUERY_TAG:-latest}"
-    profiles:
-      - "local_node_query"
-    ports:
-      - "${NB_QUERY_PORT_HOST:-3000}:5173"
-    environment:
-      NB_API_QUERY_URL: ${NB_API_QUERY_URL}
-      NB_IS_FEDERATION_API: "false"
       NB_QUERY_APP_BASE_PATH: ${NB_QUERY_APP_BASE_PATH:-/}
       NB_ENABLE_AUTH: ${NB_ENABLE_AUTH:-false}
       NB_QUERY_CLIENT_ID: ${NB_QUERY_CLIENT_ID}
