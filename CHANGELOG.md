@@ -23,7 +23,7 @@ First release of the Neurobagel deployment recipe. This release introduces diffe
 #### 🚀 Enhancements
 
 - [CI] Make first release [#76](https://github.com/neurobagel/recipes/pull/76) ([@alyssadai](https://github.com/alyssadai))
-- [ENH] Added `NB_QUERY_URL_PATH` [#69](https://github.com/neurobagel/recipes/pull/69) ([@alyssadai](https://github.com/alyssadai) [@rmanaem](https://github.com/rmanaem))
+- [ENH] Added `NB_QUERY_APP_BASE_PATH` [#69](https://github.com/neurobagel/recipes/pull/69) ([@alyssadai](https://github.com/alyssadai) [@rmanaem](https://github.com/rmanaem))
 - [ENH] add auth vars to n-API & local query tool and disable by default [#67](https://github.com/neurobagel/recipes/pull/67) ([@alyssadai](https://github.com/alyssadai))
 - [ENH] Update environment variables and remove deprecated `version` tag [#65](https://github.com/neurobagel/recipes/pull/65) ([@alyssadai](https://github.com/alyssadai))
 - [ENH] Added `NB_FEDERATE_REMOTE_PUBLIC_NODES` env var [#61](https://github.com/neurobagel/recipes/pull/61) ([@rmanaem](https://github.com/rmanaem))
