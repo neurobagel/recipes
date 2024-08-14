@@ -1,7 +1,7 @@
 services:
 
   api:
-    image: "neurobagel/api:${NB_NAPI_TAG:-nightly}"
+    image: "neurobagel/api:${NB_NAPI_TAG:-latest}"
     profiles:
       - "local_node"
       - "full_stack"
@@ -50,7 +50,7 @@ services:
       - db_user_password
 
   federation:
-    image: "neurobagel/federation_api:${NB_FAPI_TAG:-nightly}"
+    image: "neurobagel/federation_api:${NB_FAPI_TAG:-latest}"
     profiles:
       - "local_federation"
       - "full_stack"
@@ -65,7 +65,7 @@ services:
       NB_QUERY_CLIENT_ID: ${NB_QUERY_CLIENT_ID}
 
   query_federation:
-    image: "neurobagel/query_tool:${NB_QUERY_TAG:-nightly}"
+    image: "neurobagel/query_tool:${NB_QUERY_TAG:-latest}"
     profiles:
       - "local_federation"
       - "full_stack"
