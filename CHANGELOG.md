@@ -1,3 +1,25 @@
+# v0.1.0 (Wed Aug 14 2024)
+
+#### 💥 Breaking Changes
+
+- [MNT] Renamed `NB_QUERY_URL_PATH` env var to `NB_QUERY_APP_BASE_PATH` [#77](https://github.com/neurobagel/recipes/pull/77) ([@rmanaem](https://github.com/rmanaem))
+- [ENH] Removed `local_node_query` profile [#72](https://github.com/neurobagel/recipes/pull/72) ([@rmanaem](https://github.com/rmanaem))
+
+#### 🚀 Enhancements
+
+- [FIX] Revert default image tags to `latest` [#79](https://github.com/neurobagel/recipes/pull/79) ([@alyssadai](https://github.com/alyssadai))
+
+#### 🏠 Internal
+
+- [MNT] Updated `compatibility.yaml` file and e2e tests [#78](https://github.com/neurobagel/recipes/pull/78) ([@rmanaem](https://github.com/rmanaem))
+
+#### Authors: 2
+
+- Alyssa Dai ([@alyssadai](https://github.com/alyssadai))
+- Arman Jahanpour ([@rmanaem](https://github.com/rmanaem))
+
+---
+
 # v0.0.1 (Wed Aug 07 2024)
 
 :tada: This release contains work from new contributors! :tada:
