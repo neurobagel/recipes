@@ -6,14 +6,14 @@ services:
       - "local_node"
       - "full_stack"
     ports:
-      - "${NB_NAPI_PORT_HOST:-8000}:${NB_NAPI_PORT:-8000}"
+      - "${NB_NAPI_PORT_HOST:-8000}:8000"
     environment:
       NB_GRAPH_USERNAME: ${NB_GRAPH_USERNAME}
-      NB_GRAPH_ADDRESS: ${NB_GRAPH_ADDRESS:-graph}
-      NB_GRAPH_PORT: ${NB_GRAPH_PORT:-7200}
+      NB_GRAPH_ADDRESS: graph
+      NB_GRAPH_PORT: 7200
       NB_GRAPH_DB: ${NB_GRAPH_DB:-repositories/my_db}
       NB_RETURN_AGG: ${NB_RETURN_AGG:-true}
-      NB_API_PORT: ${NB_NAPI_PORT:-8000}
+      NB_API_PORT: 8000
       NB_API_ALLOWED_ORIGINS: ${NB_NAPI_ALLOWED_ORIGINS}
       NB_ENABLE_AUTH: ${NB_ENABLE_AUTH:-false}
       NB_QUERY_CLIENT_ID: ${NB_QUERY_CLIENT_ID}
@@ -25,7 +25,7 @@ services:
       - db_user_password
 
   graph:
-    image: "${NB_GRAPH_IMG:-ontotext/graphdb:10.3.1}"
+    image: "ontotext/graphdb:10.3.1"
     profiles:
       - "local_node"
       - "full_stack"
@@ -36,11 +36,11 @@ services:
       - "./vocab:/usr/src/neurobagel/vocab"
       - "${LOCAL_GRAPH_DATA:-./data}:/data"
     ports:
-      - "${NB_GRAPH_PORT_HOST:-7200}:${NB_GRAPH_PORT:-7200}"
+      - "${NB_GRAPH_PORT_HOST:-7200}:7200"
     environment:
       NB_GRAPH_USERNAME: ${NB_GRAPH_USERNAME}
-      NB_GRAPH_ADDRESS: ${NB_GRAPH_ADDRESS:-graph}
-      NB_GRAPH_PORT: ${NB_GRAPH_PORT:-7200}
+      NB_GRAPH_ADDRESS: graph
+      NB_GRAPH_PORT: 7200
       NB_GRAPH_DB: ${NB_GRAPH_DB:-repositories/my_db}
     entrypoint:
       - "/usr/src/neurobagel/scripts/setup.sh"
@@ -55,11 +55,11 @@ services:
       - "local_federation"
       - "full_stack"
     ports:
-      - "${NB_FAPI_PORT_HOST:-8080}:${NB_FAPI_PORT:-8000}"
+      - "${NB_FAPI_PORT_HOST:-8080}:8000"
     volumes:
       - "./local_nb_nodes.json:/usr/src/local_nb_nodes.json:ro"
     environment:
-      NB_API_PORT: ${NB_FAPI_PORT:-8000}
+      NB_API_PORT: 8000
       NB_FEDERATE_REMOTE_PUBLIC_NODES: ${NB_FEDERATE_REMOTE_PUBLIC_NODES:-True}
       NB_ENABLE_AUTH: ${NB_ENABLE_AUTH:-false}
       NB_QUERY_CLIENT_ID: ${NB_QUERY_CLIENT_ID}
