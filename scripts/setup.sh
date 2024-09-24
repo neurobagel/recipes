@@ -3,6 +3,17 @@
 /opt/graphdb/dist/bin/graphdb -Dgraphdb.home=/opt/graphdb/home &
 GRAPHDB_PID=$!
 
+# If secrets files are empty (meaning passwords have not been set or password file paths are incorrect), error out and exit
+if [ ! -s /run/secrets/db_admin_password ]; then
+    echo -e "Error: NB_GRAPH_ADMIN_PASSWORD secret is missing or empty. Please ensure that {NB_GRAPH_SECRETS_PATH}/NB_GRAPH_ADMIN_PASSWORD.txt exists and is not empty.\nExiting."
+    exit 1
+fi
+
+if [ ! -s /run/secrets/db_user_password ]; then
+    echo -e "Error: NB_GRAPH_PASSWORD secret is missing or empty. Please ensure that {NB_GRAPH_SECRETS_PATH}/NB_GRAPH_PASSWORD.txt exists and is not empty.\nExiting."
+    exit 1
+fi
+
 # TODO revisit/test this also once we document how users can change (in addition to the data files being uploaded) the variables to set up a non-tester database after a first-time deployment
 export NB_GRAPH_ADMIN_PASSWORD=$(cat /run/secrets/db_admin_password)
 export NB_GRAPH_PASSWORD=$(cat /run/secrets/db_user_password)
