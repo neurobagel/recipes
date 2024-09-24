@@ -4,12 +4,12 @@
 GRAPHDB_PID=$!
 
 # If secrets files are empty (meaning passwords have not been set or password file paths are incorrect), error out and exit
-if [ ! -s /run/secrets/db_admin_password ]; then
+if [ ! -f /run/secrets/db_admin_password ]; then
     echo -e "Error: NB_GRAPH_ADMIN_PASSWORD secret is missing or empty. Please ensure that {NB_GRAPH_SECRETS_PATH}/NB_GRAPH_ADMIN_PASSWORD.txt exists and is not empty.\nExiting."
     exit 1
 fi
 
-if [ ! -s /run/secrets/db_user_password ]; then
+if [ ! -f /run/secrets/db_user_password ]; then
     echo -e "Error: NB_GRAPH_PASSWORD secret is missing or empty. Please ensure that {NB_GRAPH_SECRETS_PATH}/NB_GRAPH_PASSWORD.txt exists and is not empty.\nExiting."
     exit 1
 fi
