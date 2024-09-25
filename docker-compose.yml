@@ -79,9 +79,9 @@ services:
 
 secrets:
   db_admin_password:
-    environment: "NB_GRAPH_ADMIN_PASSWORD"
+    file: ${NB_GRAPH_SECRETS_PATH:-./secrets}/NB_GRAPH_ADMIN_PASSWORD.txt
   db_user_password:
-    environment: "NB_GRAPH_PASSWORD"
+    file: ${NB_GRAPH_SECRETS_PATH:-./secrets}/NB_GRAPH_PASSWORD.txt
 
 volumes:
   graphdb_home:
