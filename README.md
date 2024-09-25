@@ -34,18 +34,18 @@ See comments in the `.env` file for more information.
 
 3. In the repository root, start the Docker Compose stack and specify your desired deployment profile
 
-    **To set up only a local node (without a graphical query tool):**
+    **To set up a local node along with a graphical query tool and optional federation:**
     ```bash
     docker compose up -d
     ```
     or
     ```bash
-    docker compose --profile local_node up -d
+    docker compose --profile full_stack up -d
     ```
 
-    **To set up a local node along with a graphical query tool and optional federation:**
+    **To set up only a local node (without a graphical query tool):**
     ```bash
-    docker compose --profile full_stack up -d
+    docker compose --profile local_node up -d
     ```
 
     **To set up federation only:**
