@@ -1,3 +1,20 @@
+# v0.2.0 (Thu Sep 26 2024)
+
+#### 💥 Breaking Changes
+
+- [REF] Create GraphDB password secrets from .txt files instead of env variables [#84](https://github.com/neurobagel/recipes/pull/84) ([@alyssadai](https://github.com/alyssadai))
+
+#### 🚀 Enhancements
+
+- [REF] Change default profile from `local_node` to `full_stack` [#86](https://github.com/neurobagel/recipes/pull/86) ([@alyssadai](https://github.com/alyssadai))
+- [REF] Remove container-internal ports and unneeded graph config vars [#80](https://github.com/neurobagel/recipes/pull/80) ([@alyssadai](https://github.com/alyssadai))
+
+#### Authors: 1
+
+- Alyssa Dai ([@alyssadai](https://github.com/alyssadai))
+
+---
+
 # v0.1.0 (Wed Aug 14 2024)
 
 #### 💥 Breaking Changes
