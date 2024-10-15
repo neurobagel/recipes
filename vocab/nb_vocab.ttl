@@ -1,37 +1,38 @@
-@prefix nb: <http://neurobagel.org/vocab/> . 
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix nb: <http://neurobagel.org/vocab/>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 
-nb:Acquisition
-    a rdfs:Class.
+nb:Acquisition a rdfs:Class.
 
-nb:Age
-    a rdfs:Class.
+nb:Assessment a rdfs:Class;
+    rdfs:subClassOf nb:ControlledTerm.
 
-nb:Assessment 
-    a rdfs:Class ;
-    rdfs:subClassOf nb:ControlledTerm .
+nb:CompletedPipeline a rdfs:Class.
 
-nb:ControlledTerm
-    a rdfs:Class.
+nb:ControlledTerm a rdfs:Class.
 
-nb:Diagnosis
-    a rdfs:Class ;
-    rdfs:subClassOf nb:ControlledTerm .
+nb:Dataset a rdfs:Class.
 
-nb:Image
-    a rdfs:Class ;
-    rdfs:subClassOf nb:ControlledTerm .
+nb:Diagnosis a rdfs:Class;
+    rdfs:subClassOf nb:ControlledTerm.
 
-nb:Session
-    a rdfs:Class.
+nb:Image a rdfs:Class;
+    rdfs:subClassOf nb:ControlledTerm.
 
-nb:Sex
-    a rdfs:Class ;
-    rdfs:subClassOf nb:ControlledTerm .
+nb:ImagingSession a rdfs:Class;
+    rdfs:subClassOf nb:Session.
 
-nb:Subject 
-    a rdfs:Class.
+nb:PhenotypicSession a rdfs:Class;
+    rdfs:subClassOf nb:Session.
 
-nb:SubjectGroup
-    a rdfs:Class ;
-    rdfs:subClassOf nb:ControlledTerm .
+nb:Pipeline a rdfs:Class;
+    rdfs:subClassOf nb:ControlledTerm.
+
+nb:Session a rdfs:Class.
+
+nb:Sex a rdfs:Class;
+    rdfs:subClassOf nb:ControlledTerm.
+
+nb:Subject a rdfs:Class.
+
+nb:SubjectGroup a rdfs:Class;
+    rdfs:subClassOf nb:ControlledTerm.
