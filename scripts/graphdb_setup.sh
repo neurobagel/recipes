@@ -122,9 +122,10 @@ ENV_FILE_PATH=$_arg_env_file_path
 ADMIN_PASS=$_arg_admin_pass
 RUN_USER_SETUP=$_arg_run_user_setup
 
+# Note: Uncomment when running graphdb_setup.sh as a standalone script
 # Set the environment variables in the shell, to use in the script
-source "${ENV_FILE_PATH}"
-echo "Environment variables have been set from ${ENV_FILE_PATH}."
+# source "${ENV_FILE_PATH}"
+# echo "Environment variables have been set from ${ENV_FILE_PATH}."
 
 # Extract just the database name
 DB_NAME="${NB_GRAPH_DB#repositories/}"

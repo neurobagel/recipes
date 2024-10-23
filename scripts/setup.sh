@@ -44,7 +44,7 @@ main() {
 
     if [ "${FIRST_TIME_SETUP}" = "on" ]; then
         echo "Setting up GraphDB server..."
-        ./graphdb_setup.sh --env-file-path /usr/src/neurobagel/.env "${NB_GRAPH_ADMIN_PASSWORD}"
+        ./graphdb_setup.sh "${NB_GRAPH_ADMIN_PASSWORD}"
         echo "Finished server setup."export FIRST_TIME_SETUP="on"
     else
         echo "GraphDB server already set up, skipping setup."

@@ -32,14 +32,12 @@ services:
     volumes:
       - "graphdb_home:/opt/graphdb/home"
       - "./scripts:/usr/src/neurobagel/scripts"
-      - ".env:/usr/src/neurobagel/.env"
       - "./vocab:/usr/src/neurobagel/vocab"
       - "${LOCAL_GRAPH_DATA:-./data}:/data"
     ports:
       - "${NB_GRAPH_PORT_HOST:-7200}:7200"
     environment:
       NB_GRAPH_USERNAME: ${NB_GRAPH_USERNAME}
-      NB_GRAPH_ADDRESS: graph
       NB_GRAPH_PORT: 7200
       NB_GRAPH_DB: ${NB_GRAPH_DB:-repositories/my_db}
     entrypoint:
