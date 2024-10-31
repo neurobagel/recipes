@@ -1,3 +1,24 @@
+# v0.3.0 (Thu Oct 31 2024)
+
+#### 🚀 Enhancements
+
+- [ENH] Update reference example JSONLD with derivatives metadata [#92](https://github.com/neurobagel/recipes/pull/92) ([@alyssadai](https://github.com/alyssadai))
+
+#### 🐛 Bug Fixes
+
+- [FIX] Update `nb_vocab.ttl` with imaging/phenotypic sessions and pipeline classes [#89](https://github.com/neurobagel/recipes/pull/89) ([@alyssadai](https://github.com/alyssadai))
+
+#### 🏠 Internal
+
+- [MNT] Removed `.env` volume from `graph` service [#90](https://github.com/neurobagel/recipes/pull/90) ([@rmanaem](https://github.com/rmanaem))
+
+#### Authors: 2
+
+- Alyssa Dai ([@alyssadai](https://github.com/alyssadai))
+- Arman Jahanpour ([@rmanaem](https://github.com/rmanaem))
+
+---
+
 # v0.2.0 (Thu Sep 26 2024)
 
 #### 💥 Breaking Changes
