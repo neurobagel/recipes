@@ -1,3 +1,15 @@
+# v0.4.0 (Mon Dec 16 2024)
+
+#### 🚀 Enhancements
+
+- [ENH] Add `NB_MIN_CELL_SIZE` env var & reorder env var table for better flow [#98](https://github.com/neurobagel/recipes/pull/98) ([@alyssadai](https://github.com/alyssadai))
+
+#### Authors: 1
+
+- Alyssa Dai ([@alyssadai](https://github.com/alyssadai))
+
+---
+
 # v0.3.0 (Thu Oct 31 2024)
 
 #### 🚀 Enhancements
