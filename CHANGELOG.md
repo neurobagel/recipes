@@ -1,3 +1,15 @@
+# v0.4.1 (Thu Jan 09 2025)
+
+#### 🚀 Enhancements
+
+- [ENH] Add NGINX timeout config file [#100](https://github.com/neurobagel/recipes/pull/100) ([@surchs](https://github.com/surchs))
+
+#### Authors: 1
+
+- Sebastian Urchs ([@surchs](https://github.com/surchs))
+
+---
+
 # v0.4.0 (Mon Dec 16 2024)
 
 #### 🚀 Enhancements
