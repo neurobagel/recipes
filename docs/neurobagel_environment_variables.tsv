@@ -18,6 +18,6 @@ Environment variable	Default needs change?	Description	Default value if not set	
 `NB_QUERY_PORT_HOST`	No	Port number used by the `query_tool` on the host machine	`3000`	Docker
 `NB_API_QUERY_URL`	Yes	URL (and port number, if needed) of the Neurobagel API that the query tool will send its requests to. The query tool sends requests from a user's machine, so ensure the API URL is provided *as a user would access it from their own machine*. See also the [query tool README](https://github.com/neurobagel/query-tool?tab=readme-ov-file#set-the-environment-variables).	-	Docker
 `NB_QUERY_APP_BASE_PATH`	No	(If using reverse proxy) The URL path for the query tool, determines the specific URL at which the app should be rendered for users to access it	`/`	Docker
-`NB_QUERY_HEADER_SCRIPT`	No	(Experimental) Custom script to add to the header section of the query tool site, such as for a GDPR-aware analytics tool.	`""`	Docker
-`NB_ENABLE_AUTH`	No	**(Experimental, for dev deployments only)** Whether to enable authentication for cohort queries. One of [true, false]	`false`	Docker, Python
-`NB_QUERY_CLIENT_ID`	No	**(Experimental, for dev deployments only)** OAuth client ID for the query tool. Required if NB_ENABLE_AUTH is set to true.	-	Docker, Python
+`NB_QUERY_HEADER_SCRIPT`	No	(Experimental, for development environments only) Custom script to add to the header section of the query tool site, such as for a GDPR-aware analytics tool.	`""`	Docker
+`NB_ENABLE_AUTH`	No	**(Experimental, for development environments only)** Whether to enable authentication for cohort queries. One of [true, false]	`false`	Docker, Python
+`NB_QUERY_CLIENT_ID`	No	**(Experimental, for development environments only)** OAuth client ID for the query tool. Required if NB_ENABLE_AUTH is set to true.	-	Docker, Python
