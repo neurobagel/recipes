@@ -9,7 +9,7 @@ Environment variable	Default needs change?	Description	Default value if not set	
 `NB_MIN_CELL_SIZE`	No	Minimum number of matching subjects required for a dataset to be returned as a query match. Datasets with matching subjects <= this number will be excluded from query results.	`0`	Docker, Python
 `NB_NAPI_TAG`	No	Docker image tag for the Neurobagel node API	`latest`	Docker
 `NB_NAPI_PORT_HOST`	No	Port number on the _host machine_ to map the Neurobagel node API container port to	`8000`	Docker
-`NB_NAPI_ROOT_PATH`	No	(If using reverse proxy) The URL path where the node API is served from. Do not include a trailing slash.	`""`	Docker
+`NB_NAPI_BASE_PATH`	No	(If using reverse proxy) The URL path where the node API is served from. Do not include a trailing slash.	`""`	Docker
 `NB_FAPI_TAG`	No	Docker image tag for the Neurobagel federation API	`latest`	Docker
 `NB_FAPI_PORT_HOST`	No	Port number on the _host machine_ to map the Neurobagel federation API container port to	`8080`	Docker
 `NB_FEDERATE_REMOTE_PUBLIC_NODES`	No 	If "True", include public nodes in federation. If "False", only locally specified nodes in `local_nb_nodes.json` are queried.	`true`	Docker, Python
