@@ -1,3 +1,19 @@
+# v0.4.2 (Tue Feb 11 2025)
+
+#### 🚀 Enhancements
+
+- [MNT] Update default data to latest file including SNOMED assessment terms [#107](https://github.com/neurobagel/recipes/pull/107) ([@alyssadai](https://github.com/alyssadai))
+
+#### 🐛 Bug Fixes
+
+- [FIX] Use `jq` to handle GraphDB credentials payloads with special characters [#109](https://github.com/neurobagel/recipes/pull/109) ([@alyssadai](https://github.com/alyssadai))
+
+#### Authors: 1
+
+- Alyssa Dai ([@alyssadai](https://github.com/alyssadai))
+
+---
+
 # v0.4.1 (Thu Jan 09 2025)
 
 #### 🚀 Enhancements
