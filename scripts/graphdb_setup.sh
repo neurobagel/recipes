@@ -136,6 +136,10 @@ SCRIPT_DIR=$(dirname "$0")
 
 echo "The GraphDB server is being accessed at http://localhost:${NB_GRAPH_PORT}."
 
+# Install jq to construct JSON payloads for curl requests while preserving special characters
+echo "Installing jq..."
+apk add --no-cache jq
+
 ##### First time GraphDB setup #####
 
 if [ "${RUN_USER_SETUP}" = "on" ]; then
@@ -144,8 +148,9 @@ if [ "${RUN_USER_SETUP}" = "on" ]; then
     # 1. Change database admin password
     echo "Changing the admin password (note: if you have previously set the admin password, this has no effect)..."
 	# TODO: To change a *previously set* admin password, we need to also provide the current password via -u
-    curl -X PATCH --header 'Content-Type: application/json' http://localhost:${NB_GRAPH_PORT}/rest/security/users/admin -d "{\"password\": \""${ADMIN_PASS}"\"}"
-    
+	json_payload=$(jq -n --arg pw "${ADMIN_PASS}" '{password: $pw}')
+	curl -X PATCH --header 'Content-Type: application/json' http://localhost:${NB_GRAPH_PORT}/rest/security/users/admin -d "${json_payload}"
+
 	# 2. If security is not enabled, enable it (i.e. allow only authenticated users access)
 	is_security_enabled=$(curl -s -X GET http://localhost:${NB_GRAPH_PORT}/rest/security)
 	if [ "${is_security_enabled}" = "false" ]; then
@@ -160,12 +165,8 @@ if [ "${RUN_USER_SETUP}" = "on" ]; then
 	# TODO: Separate this out from the first-time setup? As this can technically be run at any time to create additional users.
 	# NOTE: If user already exists, response will be "An account with the given username already exists." OK for script.
 	echo "Creating a new database user ${NB_GRAPH_USERNAME}..."
-    curl -X POST --header 'Content-Type: application/json' -u "admin:${ADMIN_PASS}" -d @- http://localhost:${NB_GRAPH_PORT}/rest/security/users/${NB_GRAPH_USERNAME} <<EOF
-    {
-        "username": "${NB_GRAPH_USERNAME}",
-        "password": "${NB_GRAPH_PASSWORD}"
-    } 
-EOF
+	json_payload=$(jq -n --arg un "${NB_GRAPH_USERNAME}" --arg pw "${NB_GRAPH_PASSWORD}" '{username: $un, password: $pw}')
+	curl -X POST --header 'Content-Type: application/json' -u "admin:${ADMIN_PASS}" -d "${json_payload}" http://localhost:${NB_GRAPH_PORT}/rest/security/users/${NB_GRAPH_USERNAME}
 fi
 
 
