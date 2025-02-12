@@ -60,7 +60,7 @@ services:
       - "./local_nb_nodes.json:/usr/src/local_nb_nodes.json:ro"
     environment:
       NB_API_PORT: 8000
-      NB_FAPI_ROOT_PATH: ${NB_FAPI_ROOT_PATH}
+      NB_FAPI_BASE_PATH: ${NB_FAPI_BASE_PATH}
       NB_FEDERATE_REMOTE_PUBLIC_NODES: ${NB_FEDERATE_REMOTE_PUBLIC_NODES:-True}
       NB_ENABLE_AUTH: ${NB_ENABLE_AUTH:-false}
       NB_QUERY_CLIENT_ID: ${NB_QUERY_CLIENT_ID}
