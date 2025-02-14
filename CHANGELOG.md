@@ -1,3 +1,15 @@
+# v0.5.0 (Fri Feb 14 2025)
+
+#### 🚀 Enhancements
+
+- [ENH] Add environment variables for API root paths and query site header script [#106](https://github.com/neurobagel/recipes/pull/106) ([@alyssadai](https://github.com/alyssadai))
+
+#### Authors: 1
+
+- Alyssa Dai ([@alyssadai](https://github.com/alyssadai))
+
+---
+
 # v0.4.2 (Tue Feb 11 2025)
 
 #### 🚀 Enhancements
