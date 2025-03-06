@@ -1,6 +1,7 @@
 name: Test deployment recipe workflow
 
 on:
+  workflow_call:
   workflow_dispatch:
   schedule:
     - cron: '0 6,18 * * *'
@@ -20,8 +21,8 @@ jobs:
       
       - name: Edit environment variables and credentials
         run: |
-          # Replace NB_NAPI_QUERY_URL placeholder
-          sed -i 's|^NB_NAPI_QUERY_URL=.*|NB_NAPI_QUERY_URL=http://localhost:8080|g' .env
+          # Replace NB_API_QUERY_URL placeholder
+          sed -i 's|^NB_API_QUERY_URL=.*|NB_API_QUERY_URL=http://localhost:8080|g' .env
 
           # Replace default username/password
           echo "testadminpassword" > secrets/NB_GRAPH_ADMIN_PASSWORD.txt
