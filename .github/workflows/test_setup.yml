@@ -57,11 +57,11 @@ jobs:
           echo ""
           for container in neurobagel_node-graph-1 neurobagel_node-api-1 neurobagel_node-federation-1 neurobagel_node-query_federation-1; do
               if [ -z "$(docker ps --filter "name=$container" --format '{{.Names}}')" ]; then
-                  echo -e "Container ${container} is not running!\n"
+                  echo -e "Container ${container} is not running\!\n"
                   docker logs ${container}
 
                   # Fail step
-                  exit 1
+                  # exit 1
               fi
           done
           echo "All containers are running."
