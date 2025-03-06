@@ -28,10 +28,11 @@ describe('When I load the query tool', () => {
         // here by only selecting for role=listbox - the test will fail if the dropdown is empty
         // either way, but now it will fail because the element is not found.
 
-        // Imaging modality
-        cy.get('[data-cy="Imaging modality-categorical-field"]').click();
-        cy.get('[role="listbox"]').contains("T1 Weighted");
-        cy.get('[data-cy="Imaging modality-categorical-field"]').click();
+        // Sex
+        // Sex is hardcoded, so we don't have to check for each option to exist
+        cy.get('[data-cy="Sex-categorical-field"]').click();
+        cy.get('[role="listbox"]').contains("male");
+        cy.get('[data-cy="Sex-categorical-field"]').click();
 
         // Diagnosis
         cy.get('[data-cy="Diagnosis-categorical-field"]').click();       
@@ -54,6 +55,21 @@ describe('When I load the query tool', () => {
                 )
             )});
         cy.get('[data-cy="Assessment tool-categorical-field"]').click();
+        
+        // Imaging modality
+        cy.get('[data-cy="Imaging modality-categorical-field"]').click();
+        cy.get('[role="listbox"]').contains("T1 Weighted");
+        cy.get('[data-cy="Imaging modality-categorical-field"]').click();
 
+        // Pipeline Name
+        cy.get('[data-cy="Pipeline name-categorical-field"]').click();
+        cy.get('[role="listbox"]')
+            .within(() => {
+                const terms = ["Freesurfer", "fmriprep"]
+                terms.forEach(term => (
+                    cy.contains(term, {matchCase: false})
+                )
+            )});
+        cy.get('[data-cy="Pipeline name-categorical-field"]').click();
     });
 });
