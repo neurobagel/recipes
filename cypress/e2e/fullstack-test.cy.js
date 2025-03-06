@@ -20,16 +20,21 @@ describe('When I load the query tool', () => {
         cy.get('body').click();
     });
     it.only('I see the expected options for each variable dropdown', () => {
+        // In this test we're looking at dropdown items in the expanded dropdown area.
+        // 
+        // There are no good selectors for the expanded dropdown area.
+        // What's more: if the dropdown is empty, it will have the attribute role=presentation,
+        // but if it has items, it will have the attribute role=listbox. We make use of this
+        // here by only selecting for role=listbox - the test will fail if the dropdown is empty
+        // either way, but now it will fail because the element is not found.
+
+        // Imaging modality
         cy.get('[data-cy="Imaging modality-categorical-field"]').click();
         cy.get('[role="listbox"]').contains("T1 Weighted");
         cy.get('[data-cy="Imaging modality-categorical-field"]').click();
 
-        cy.get('[data-cy="Diagnosis-categorical-field"]').click();
-        // We sadly can only select the expanded dropdown fields based on this role attribute
-        // But both the parent and the dropdown field itself have the same role, so we need
-        // to select them in this chained manner.
-        // We only need to do this role=presentation selection if the dropdown elements are emtpy
-        // otherwise we can do the more straightforward selection of role=listbox
+        // Diagnosis
+        cy.get('[data-cy="Diagnosis-categorical-field"]').click();       
         cy.get('[role="listbox"]')
             .within(() => {
                 const terms = ["Attention deficit hyperactivity disorder"]
@@ -39,6 +44,7 @@ describe('When I load the query tool', () => {
             )});
         cy.get('[data-cy="Diagnosis-categorical-field"]').click();
 
+        // Assessment tool
         cy.get('[data-cy="Assessment tool-categorical-field"]').click();
         cy.get('[role="listbox"]')
             .within(() => {
@@ -48,15 +54,6 @@ describe('When I load the query tool', () => {
                 )
             )});
         cy.get('[data-cy="Assessment tool-categorical-field"]').click();
-
-        // cy.get('[role="menu"]')  // This is the typical role for a dropdown menu in MUI
-        // .should('be.visible')  // Ensure the dropdown is visible
-        // .within(() => {
-        //   // Check if specific items are present
-        //   cy.contains('Item 1').should('exist');  // Replace with your expected item text
-        //   cy.contains('Item 2').should('exist');  // Replace with your expected item text
-        //   cy.contains('Item 3').should('exist');  // Replace with your expected item text
-        // });
 
     });
 });
