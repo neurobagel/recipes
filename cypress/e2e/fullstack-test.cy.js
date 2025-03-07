@@ -73,15 +73,16 @@ describe('When I load the query tool', () => {
         cy.get('[data-cy="Pipeline name-categorical-field"]').click();
     });
 });
+
 describe.only('When I run an unfiltered query on all nodes', () => {
+
     beforeEach(() => {
         cy.visit('http://localhost:3000/')
-    });
-    it('I see the expected matching datasets', () => {
-        cy.get('[data-cy="Neurobagel graph-categorical-field"]').type(
-            'local graph 1{downarrow}{enter}'
-        );
+        cy.intercept('*query?*').as('call');
         cy.get('[data-cy="submit-query-button"]').click();
+    });
+    
+    it('I see the expected matching datasets', () => {
         cy.get('[data-cy="summary-stats"]').contains("1 datasets");
         cy.get('[data-cy="result-container"]')
             .within(() => {
@@ -97,5 +98,16 @@ describe.only('When I run an unfiltered query on all nodes', () => {
                     cy.contains(pipeline, {matchCase: false})
                 )
             )});
+    });
+    
+    it('The results TSV I download contains the expected contents', () => {
+        cy.wait('@call');
+        cy.get('[data-cy="select-all-checkbox"]').find('input').check();
+        cy.get('[data-cy="download-results-button"]').click();
+        cy.readFile('cypress/downloads/neurobagel-query-results.tsv').then((fileContent) => {
+          const rows = fileContent.split('\n');
+          expect(rows[1]).to.contains("protected");
+          expect(rows[1]).to.contains("BIDS synthetic"); 
+        })
     });
 });
