@@ -19,7 +19,7 @@ describe('When I load the query tool', () => {
         cy.get('li').contains("No notifications");
         cy.get('body').click();
     });
-    it.only('I see the expected options for each variable dropdown', () => {
+    it('I see the expected options for each variable dropdown', () => {
         // In this test we're looking at dropdown items in the expanded dropdown area.
         // 
         // There are no good selectors for the expanded dropdown area.
@@ -71,5 +71,31 @@ describe('When I load the query tool', () => {
                 )
             )});
         cy.get('[data-cy="Pipeline name-categorical-field"]').click();
+    });
+});
+describe.only('When I run an unfiltered query on all nodes', () => {
+    beforeEach(() => {
+        cy.visit('http://localhost:3000/')
+    });
+    it('I see the expected matching datasets', () => {
+        cy.get('[data-cy="Neurobagel graph-categorical-field"]').type(
+            'local graph 1{downarrow}{enter}'
+        );
+        cy.get('[data-cy="submit-query-button"]').click();
+        cy.get('[data-cy="summary-stats"]').contains("1 datasets");
+        cy.get('[data-cy="result-container"]')
+            .within(() => {
+                const substrings = ["BIDS synthetic", "Local graph 1", "5 subjects match", "5 total subjects", "Flow", "T1"]
+                substrings.forEach(substring => (
+                    cy.contains(substring, {matchCase: false})
+                )
+            )});
+        cy.contains("button", "Available pipelines").trigger("mouseover")
+        cy.get('.MuiTooltip-tooltip')
+            .within(() => {
+                ["fmriprep 23.1.3", "freesurfer 7.3.2"].forEach(pipeline => (
+                    cy.contains(pipeline, {matchCase: false})
+                )
+            )});
     });
 });
