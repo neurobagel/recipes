@@ -23,6 +23,7 @@ jobs:
         run: |
           # Replace NB_API_QUERY_URL placeholder
           sed -i 's|^NB_API_QUERY_URL=.*|NB_API_QUERY_URL=http://localhost:8080|g' .env
+          sed -i 's|^NB_FEDERATE_REMOTE_PUBLIC_NODES=.*|NB_FEDERATE_REMOTE_PUBLIC_NODES=false|g' .env
 
           # Replace default username/password
           echo "testadminpassword" > secrets/NB_GRAPH_ADMIN_PASSWORD.txt
