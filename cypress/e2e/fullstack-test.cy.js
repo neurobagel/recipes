@@ -78,11 +78,12 @@ describe('When I run an unfiltered query on all nodes', () => {
 
     beforeEach(() => {
         cy.visit('http://localhost:3000/')
+        // Listen for f-API request so we can wait for it later before checking results
         cy.intercept('*query?*').as('call');
         cy.get('[data-cy="submit-query-button"]').click();
     });
     
-    it('I see the expected matching datasets', () => {
+    it('I see the expected matching dataset info', () => {
         cy.get('[data-cy="summary-stats"]').contains("1 datasets");
         cy.get('[data-cy="result-container"]')
             .within(() => {
