@@ -23,6 +23,7 @@ jobs:
         run: |
           # Replace NB_API_QUERY_URL placeholder
           sed -i 's|^NB_API_QUERY_URL=.*|NB_API_QUERY_URL=http://localhost:8080|g' .env
+          sed -i 's|^NB_FEDERATE_REMOTE_PUBLIC_NODES=.*|NB_FEDERATE_REMOTE_PUBLIC_NODES=false|g' .env
 
           # Replace default username/password
           echo "testadminpassword" > secrets/NB_GRAPH_ADMIN_PASSWORD.txt
@@ -57,7 +58,7 @@ jobs:
           echo ""
           for container in neurobagel_node-graph-1 neurobagel_node-api-1 neurobagel_node-federation-1 neurobagel_node-query_federation-1; do
               if [ -z "$(docker ps --filter "name=$container" --format '{{.Names}}')" ]; then
-                  echo -e "Container ${container} is not running!\n"
+                  echo -e "Container ${container} is not running\!\n"
                   docker logs ${container}
 
                   # Fail step
