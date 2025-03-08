@@ -74,7 +74,7 @@ describe('When I load the query tool', () => {
     });
 });
 
-describe.only('When I run an unfiltered query on all nodes', () => {
+describe('When I run an unfiltered query on all nodes', () => {
 
     beforeEach(() => {
         cy.visit('http://localhost:3000/')
@@ -109,5 +109,36 @@ describe.only('When I run an unfiltered query on all nodes', () => {
           expect(rows[1]).to.contains("protected");
           expect(rows[1]).to.contains("BIDS synthetic"); 
         })
+    });
+});
+
+describe.only('When I run a filtered query on all nodes', () => {
+    it('I see the expected matching datasets and subjects', () => {
+        cy.visit('http://localhost:3000/')
+        cy.get('[data-cy="Minimum age-continuous-field"]').type('30');
+        cy.get('[data-cy="Maximum age-continuous-field"]').type('45');
+        cy.get('[data-cy="Sex-categorical-field"]').click();
+        // We need to exact match "male" to avoid matching "female"
+        cy.get("li").contains(/^male$/, {matchCase: false}).click();
+        cy.get('[data-cy="Diagnosis-categorical-field"]').type('attention{downarrow}{enter}');
+        cy.get('[data-cy="Minimum number of imaging sessions-continuous-field"]').type('1');
+        cy.get('[data-cy="Minimum number of phenotypic sessions-continuous-field"]').type('1');
+        cy.get('[data-cy="Assessment tool-categorical-field"]').type('montreal{downarrow}{enter}')
+        cy.get('[data-cy="Imaging modality-categorical-field"]').type('t1{downarrow}{enter}')
+        cy.intercept('/pipelines/np:freesurfer/versions').as('getPipelineVersionsOptions');
+        cy.get('[data-cy="Pipeline name-categorical-field"]').type('freesurfer{downarrow}{enter}')
+        cy.wait('@getPipelineVersionsOptions');
+        cy.get('[data-cy="Pipeline version-categorical-field"]').type('7.3.2{downarrow}{enter}');
+        cy.intercept('*query?*').as('call');
+        cy.get('[data-cy="submit-query-button"]').click();
+        cy.wait('@call');
+        
+        cy.get('[data-cy="summary-stats"]').contains("1 datasets");
+        cy.get('[data-cy="result-container"]')
+            .within(() => {
+                ["BIDS synthetic", "1 subjects match"].forEach(substring => (
+                    cy.contains(substring, {matchCase: false})
+                )
+            )});
     });
 });
