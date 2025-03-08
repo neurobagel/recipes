@@ -62,7 +62,7 @@ jobs:
                   docker logs ${container}
 
                   # Fail step
-                  # exit 1
+                  exit 1
               fi
           done
           echo "All containers are running."
