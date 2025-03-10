@@ -43,11 +43,12 @@ runs:
 
         # Once the file exists, we wait for the message that the setup is done
         echo "DEPLOY.log found."
+        cat ./logs/DEPLOY.log
 
-        while ! tail -n 0 -f ./logs/DEPLOY.log | grep -q "Finished setting up the Neurobagel graph backend."; do
-          :
-        done
-        echo "Neurobagel graph backend setup done."
+        # while ! tail -n 0 -f ./logs/DEPLOY.log | grep -q "Finished setting up the Neurobagel graph backend."; do
+        #   :
+        # done
+        # echo "Neurobagel graph backend setup done."
       shell: bash
 
     - name: Wait for 5 seconds
