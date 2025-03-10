@@ -1,3 +1,6 @@
+# This is a local composite action (reusable) that sets up the full stack deployment for Neurobagel.
+# It can be run as a single step inside workflow jobs, meaning that its environment can persist across steps and be reused across workflows.
+
 name: 'Neurobagel full stack set up'
 description: 'Run setup steps for full_stack deployment'
 
@@ -5,7 +8,7 @@ runs:
   using: "composite"
   steps:
     # Note: Calling workflows will likely also require the checkout action,
-    # but we include it here so that the action can be run independently
+    # but we include it here as an extra precaution so that the action can be run independently
     # since subsequent steps depend on the checkout action
     - name: Checkout
       uses: actions/checkout@v4
@@ -32,7 +35,6 @@ runs:
         docker compose --profile full_stack up -d
       shell: bash
 
-    # TODO: Could refactor this out into test_setup.yml
     - name: Wait for graph setup completion
       working-directory: ./scripts
       run: |
@@ -51,6 +53,8 @@ runs:
         echo "Neurobagel graph backend setup done."
       shell: bash
 
+    # TODO: Could factor out below steps into test_setup.yml if we don't care about 
+    # checking the services are running before every future test
     - name: Wait for 5 seconds
       run: sleep 5
       shell: bash
