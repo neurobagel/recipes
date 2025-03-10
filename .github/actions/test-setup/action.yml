@@ -46,9 +46,10 @@ runs:
         cat ./logs/DEPLOY.log
 
         # while ! tail -n 0 -f ./logs/DEPLOY.log | grep -q "Finished setting up the Neurobagel graph backend."; do
-        #   :
-        # done
-        # echo "Neurobagel graph backend setup done."
+        while ! grep -q "Finished setting up the Neurobagel graph backend." ./logs/DEPLOY.log; do
+          :
+        done
+        echo "Neurobagel graph backend setup done."
       shell: bash
 
     - name: Wait for 5 seconds
@@ -57,6 +58,7 @@ runs:
 
     - name: Check all containers are running
       run: |
+        cat ./logs/DEPLOY.log
         docker ps -a
         echo ""
         for container in neurobagel_node-graph-1 neurobagel_node-api-1 neurobagel_node-federation-1 neurobagel_node-query_federation-1; do
