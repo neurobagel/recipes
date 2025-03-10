@@ -6,11 +6,8 @@ on:
   pull_request:
 
 jobs:
-  # setup:
-  #   uses: neurobagel/recipes/.github/workflows/test_setup.yml@main
 
   test-latest:
-    # needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
