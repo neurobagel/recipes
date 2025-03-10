@@ -1,0 +1,65 @@
+name: 'Neurobagel full stack set up'
+description: 'Run setup steps for full_stack deployment'
+
+runs:
+  using: "composite"
+  steps:
+    # Note: Calling workflows will likely also require the checkout action,
+    # but we include it here so that the action can be run independently
+    # since subsequent steps depend on the checkout action
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Rename files
+      run: |
+        cp template.env .env
+        cp local_nb_nodes.template.json local_nb_nodes.json
+    
+    - name: Edit environment variables and credentials
+      run: |
+        # Replace NB_API_QUERY_URL placeholder
+        sed -i 's|^NB_API_QUERY_URL=.*|NB_API_QUERY_URL=http://localhost:8080|g' .env
+        sed -i 's|^NB_FEDERATE_REMOTE_PUBLIC_NODES=.*|NB_FEDERATE_REMOTE_PUBLIC_NODES=false|g' .env
+
+        # Replace default username/password
+        echo "testadminpassword" > secrets/NB_GRAPH_ADMIN_PASSWORD.txt
+        echo "testpassword" > secrets/NB_GRAPH_PASSWORD.txt
+    
+    - name: Launch services
+      run: |
+        docker compose --profile full_stack up -d
+
+    # TODO: Could refactor this out into test_setup.yml
+    - name: Wait for graph setup completion
+      working-directory: ./scripts
+      run: |
+        # The log is written at the end of the setup, so we must wait for the file to exist
+        while [ ! -f ./logs/DEPLOY.log ]; do
+          :
+        done
+
+        # Once the file exists, we wait for the message that the setup is done
+        echo "DEPLOY.log found."
+
+        while ! tail -n 0 -f ./logs/DEPLOY.log | grep -q "Finished setting up the Neurobagel graph backend."; do
+          :
+        done
+        echo "Neurobagel graph backend setup done."
+
+    - name: Wait for 5 seconds
+      run: sleep 5
+
+    - name: Check all containers are running
+      run: |
+        docker ps -a
+        echo ""
+        for container in neurobagel_node-graph-1 neurobagel_node-api-1 neurobagel_node-federation-1 neurobagel_node-query_federation-1; do
+            if [ -z "$(docker ps --filter "name=$container" --format '{{.Names}}')" ]; then
+                echo -e "Container ${container} is not running\!\n"
+                docker logs ${container}
+
+                # Fail step
+                exit 1
+            fi
+        done
+        echo "All containers are running."

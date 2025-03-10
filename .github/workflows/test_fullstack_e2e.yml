@@ -6,8 +6,8 @@ on:
   pull_request:
 
 jobs:
-  setup:
-    uses: neurobagel/recipes/.github/workflows/test_setup.yml@main
+  # setup:
+  #   uses: neurobagel/recipes/.github/workflows/test_setup.yml@main
 
   test-latest:
     needs: setup
@@ -15,6 +15,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set up Neurobagel full stack
+        uses: ./.github/actions/test-setup
 
       - name: Set up node env
         uses: actions/setup-node@v4
