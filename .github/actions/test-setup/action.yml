@@ -14,6 +14,7 @@ runs:
       run: |
         cp template.env .env
         cp local_nb_nodes.template.json local_nb_nodes.json
+      shell: bash
     
     - name: Edit environment variables and credentials
       run: |
@@ -24,10 +25,12 @@ runs:
         # Replace default username/password
         echo "testadminpassword" > secrets/NB_GRAPH_ADMIN_PASSWORD.txt
         echo "testpassword" > secrets/NB_GRAPH_PASSWORD.txt
+      shell: bash
     
     - name: Launch services
       run: |
         docker compose --profile full_stack up -d
+      shell: bash
 
     # TODO: Could refactor this out into test_setup.yml
     - name: Wait for graph setup completion
@@ -45,9 +48,11 @@ runs:
           :
         done
         echo "Neurobagel graph backend setup done."
+      shell: bash
 
     - name: Wait for 5 seconds
       run: sleep 5
+      shell: bash
 
     - name: Check all containers are running
       run: |
@@ -63,3 +68,4 @@ runs:
             fi
         done
         echo "All containers are running."
+      shell: bash
