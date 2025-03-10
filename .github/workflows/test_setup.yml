@@ -1,7 +1,7 @@
 name: Test deployment recipe workflow
 
 on:
-  pull_request:  # TODO: Remove
+  pull_request:  # TODO: For debugging - remove before merge
   workflow_call:
   workflow_dispatch:
   schedule:
@@ -12,8 +12,5 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: Set up full_stack
         uses: ./.github/actions/test-setup
