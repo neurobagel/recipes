@@ -10,7 +10,7 @@ jobs:
   #   uses: neurobagel/recipes/.github/workflows/test_setup.yml@main
 
   test-latest:
-    needs: setup
+    # needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
