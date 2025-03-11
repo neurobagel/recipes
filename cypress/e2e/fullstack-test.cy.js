@@ -113,7 +113,7 @@ describe('When I run an unfiltered query on all nodes', () => {
     });
 });
 
-describe.only('When I run a filtered query on all nodes', () => {
+describe('When I run a filtered query on all nodes', () => {
     it('I see the expected matching datasets and subjects', () => {
         cy.visit('http://localhost:3000/')
         cy.get('[data-cy="Minimum age-continuous-field"]').type('30');

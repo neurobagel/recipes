@@ -1,7 +1,6 @@
 name: Test deployment recipe workflow
 
 on:
-  pull_request:  # TODO: For debugging - remove before merge
   workflow_call:
   workflow_dispatch:
   schedule:
