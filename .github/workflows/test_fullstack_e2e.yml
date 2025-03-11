@@ -1,0 +1,33 @@
+name: e2e test of full stack services
+
+on:
+  workflow_dispatch:
+  # TODO: Can remove if we don't want it to run every time
+  pull_request:
+
+jobs:
+
+  test-latest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Neurobagel full stack
+        uses: ./.github/actions/test-setup
+
+      - name: Set up node env
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      
+      - name: Install Cypress
+        run: npm ci
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          wait-on: http://localhost:3000
+          config: excludeSpecPattern="**/simple-test.cy.js"
+          # otherwise, defaults to Electron
+          browser: chrome 
