@@ -9,11 +9,12 @@ describe('When I load the query tool', () => {
         
         cy.get('[data-cy="navbar"]').contains('Neurobagel')
         // Click the node dropdown and assert that the items contain the node names we expect
-        cy.get('[data-cy="Neurobagel graph-categorical-field"]').type(
-            'local graph 1{downarrow}{enter}'
-          );
+        cy.get('[data-cy="Neurobagel graph-categorical-field"]').click();
         // get list element and check that it contains the expected node names
-        cy.get('[data-cy="Neurobagel graph-categorical-field"]').contains("Local graph 1")
+        cy.get('[role="listbox"]').within(() => {
+            ["2 OpenNeuro Datasets", "BIDS synthetic"].forEach(node => (
+                cy.contains(node, {matchCase: false})
+            ))});
         // Click the bell icon and then check that the Warning area is empty
         cy.get('[data-cy="notification-button"]').click();
         cy.get('li').contains("No notifications");
@@ -84,15 +85,19 @@ describe('When I run an unfiltered query on all nodes', () => {
     });
     
     it('I see the expected matching dataset info', () => {
-        cy.get('[data-cy="summary-stats"]').contains("1 datasets");
-        cy.get('[data-cy="result-container"]')
-            .within(() => {
-                const substrings = ["BIDS synthetic", "Local graph 1", "5 subjects match", "5 total subjects", "Flow", "T1"]
+        cy.get('[data-cy="summary-stats"]').contains("3 datasets");
+        cy.get('[data-cy="result-container"]').within(() => {
+            cy.get('[data-cy^="card-"]').contains("BIDS synthetic").closest('[data-cy^="card-"]').within(() => {
+                const substrings = ["5 subjects match", "5 total subjects", "Flow", "T1"]
                 substrings.forEach(substring => (
                     cy.contains(substring, {matchCase: false})
-                )
-            )});
+                ))
+            });
+            cy.contains("Balloon Analog Risk-taking Task", {matchCase: false});
+            cy.contains("Classification learning", {matchCase: false});
+        });
         cy.contains("button", "Available pipelines").trigger("mouseover")
+        // This must be outside of the dataset card selector because the tooltip exceeds the card boundaries (?)
         cy.get('.MuiTooltip-tooltip')
             .within(() => {
                 ["fmriprep 23.1.3", "freesurfer 7.3.2"].forEach(pipeline => (
@@ -107,8 +112,15 @@ describe('When I run an unfiltered query on all nodes', () => {
         cy.get('[data-cy="download-results-button"]').click();
         cy.readFile('cypress/downloads/neurobagel-query-results.tsv').then((fileContent) => {
           const rows = fileContent.split('\n');
-          expect(rows[1]).to.contains("protected");
-          expect(rows[1]).to.contains("BIDS synthetic"); 
+          // TODO: Need to make case-insensitive?
+          const openneuroDatasetProtected = rows.some(row => 
+            row.includes("Classification learning") && row.includes("protected")
+          );
+          const syntheticDatasetOpen = rows.some(row => 
+            row.includes("BIDS synthetic") && !row.includes("protected")
+          );
+          expect(openneuroDatasetProtected).to.be.true;
+          expect(syntheticDatasetOpen).to.be.true;
         })
     });
 });
