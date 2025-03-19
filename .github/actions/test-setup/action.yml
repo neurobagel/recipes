@@ -1,9 +1,10 @@
-# This is a local composite action (reusable) that sets up the full stack deployment for Neurobagel.
+# This is a local composite action (reusable) that sets up two local Neurobagel nodes for testing.
+# This includes a full_stack deployment with a protected node, and a local_node deployment with an open node
+# that is added to the federation list of the full_stack node.
+# 
 # It can be run as a single step inside workflow jobs, meaning that its environment can persist across steps and be reused across workflows.
-#
-# TODO: Can use inputs to determine whether certain steps should run?
-name: 'Neurobagel full stack set up'
-description: 'Run setup steps for full_stack deployment'
+name: 'Neurobagel 2 nodes setup'
+description: 'Run setup steps for a local deployment of a protected and open node'
 
 runs:
   using: "composite"
@@ -82,22 +83,17 @@ runs:
         docker compose --profile local_node up -d
       shell: bash
 
-    - name: Wait for graph setup completion
-      working-directory: ./scripts
+    - name: Wait for graph setup completion for both nodes
       run: |
-        # The log is written at the end of the setup, so we must wait for the file to exist
-        while [ ! -f ./logs/DEPLOY.log ]; do
-          :
+        until [ -f protected_node/recipes/scripts/logs/DEPLOY.log ] && grep -q "Finished setting up the Neurobagel graph backend." protected_node/recipes/scripts/logs/DEPLOY.log; do
+          sleep 1
         done
+        echo "Neurobagel graph backend setup for Protected node done."
 
-        # Once the file exists, we wait for the message that the setup is done
-        echo "DEPLOY.log found."
-
-        # while ! tail -n 0 -f ./logs/DEPLOY.log | grep -q "Finished setting up the Neurobagel graph backend."; do
-        while ! grep -q "Finished setting up the Neurobagel graph backend." ./logs/DEPLOY.log; do
-          :
+        until [ -f open_node/recipes/scripts/logs/DEPLOY.log ] && grep -q "Finished setting up the Neurobagel graph backend." open_node/recipes/scripts/logs/DEPLOY.log; do
+          sleep 1
         done
-        echo "Neurobagel graph backend setup done."
+        echo "Neurobagel graph backend setup for Open node done."
       shell: bash
 
     # TODO: Could factor out below steps into test_setup.yml if we don't care about 
@@ -110,7 +106,13 @@ runs:
       run: |
         docker ps -a
         echo ""
-        for container in neurobagel_node-graph-1 neurobagel_node-api-1 neurobagel_node-federation-1 neurobagel_node-query_federation-1; do
+        for container in \
+            protected_node-graph-1
+            protected_node-api-1
+            protected_node-federation-1
+            protected_node-query_federation-1
+            open_node-graph-1
+            open_node-api-1; do
             if [ -z "$(docker ps --filter "name=$container" --format '{{.Names}}')" ]; then
                 echo -e "Container ${container} is not running\!\n"
                 docker logs ${container}
@@ -120,4 +122,9 @@ runs:
             fi
         done
         echo "All containers are running."
+      shell: bash
+
+    - name: Add nodes to same Docker network
+      run: |
+        docker network connect protected_node_default open_node-api-1
       shell: bash
