@@ -35,7 +35,8 @@ runs:
         mkdir protected_node/openneuro_mini_data
   
         # Note: Both ds000001 and ds000002 have only sex and age annotations
-        cp protected_node/openneuro-annotations/ds000001.jsonld protected_node/openneuro-annotations/ds000002.jsonld protected_node/openneuro_mini_data
+        cp protected_node/openneuro-annotations/ds000001.jsonld protected_node/openneuro_mini_data
+        cp protected_node/openneuro-annotations/ds000002.jsonld protected_node/openneuro_mini_data
       shell: bash
 
     - name: Configure Protected node
