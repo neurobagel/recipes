@@ -1,56 +1,100 @@
-# This is a local composite action (reusable) that sets up the full stack deployment for Neurobagel.
+# This is a local composite action (reusable) that sets up two local Neurobagel nodes for testing.
+# This includes a full_stack deployment with a protected node, and a local_node deployment with an open node
+# that is added to the federation list of the full_stack node.
+# 
 # It can be run as a single step inside workflow jobs, meaning that its environment can persist across steps and be reused across workflows.
-
-name: 'Neurobagel full stack set up'
-description: 'Run setup steps for full_stack deployment'
+name: 'Neurobagel 2 nodes setup'
+description: 'Run setup steps for a local deployment of a protected and open node'
 
 runs:
   using: "composite"
   steps:
+    - name: Create directories for nodes
+      run: |
+        mkdir protected_node open_node
+      shell: bash
+
     # Note: Calling workflows will likely also require the checkout action,
     # but we include it here as an extra precaution so that the action can be run independently
     # since subsequent steps depend on the checkout action
-    - name: Checkout
+    - name: Checkout recipes for Protected node (full_stack node)
       uses: actions/checkout@v4
-    
-    - name: Rename files
+      path: protected_node/recipes
+
+    # Note: OpenNeuro is public data, but we use it for an example protected node here
+    # because Neurobagel synthetic data contains instances of all variables and is thus more flexible
+    # for tests involving an open node.
+    - name: Get data source for Protected node
+      uses: actions/checkout@v4
+      with:
+        repository: neurobagel/openneuro-annotations
+        path: protected_node/openneuro-annotations
+
+    - name: Get data for Protected node
+      run: |
+        mkdir protected_node/openneuro_mini_data
+  
+        # Note: Both ds000001 and ds000002 have only sex and age annotations
+        cp protected_node/openneuro-annotations/ds000001.jsonld protected_node/openneuro_mini_data
+        cp protected_node/openneuro-annotations/ds000002.jsonld protected_node/openneuro_mini_data
+      shell: bash
+
+    - name: Configure Protected node
+      working-directory: protected_node/recipes
       run: |
         cp template.env .env
         cp local_nb_nodes.template.json local_nb_nodes.json
-      shell: bash
-    
-    - name: Edit environment variables and credentials
-      run: |
-        # Replace NB_API_QUERY_URL placeholder
-        sed -i 's|^NB_API_QUERY_URL=.*|NB_API_QUERY_URL=http://localhost:8080|g' .env
-        sed -i 's|^NB_FEDERATE_REMOTE_PUBLIC_NODES=.*|NB_FEDERATE_REMOTE_PUBLIC_NODES=false|g' .env
+
+        # Replace defaults, even if they are commented out
+        sed -i 's|^#\?[[:space:]]\?COMPOSE_PROJECT_NAME=.*|COMPOSE_PROJECT_NAME=protected_node|' .env
+        sed -i 's|^#\?[[:space:]]\?LOCAL_GRAPH_DATA=.*|LOCAL_GRAPH_DATA=../openneuro_mini_data|' .env
+        sed -i 's|^#\?[[:space:]]\?NB_FEDERATE_REMOTE_PUBLIC_NODES=.*|NB_FEDERATE_REMOTE_PUBLIC_NODES=false|' .env
+        sed -i 's|^#\?[[:space:]]\?NB_API_QUERY_URL=.*|NB_API_QUERY_URL=http://localhost:8080|' .env
 
         # Replace default username/password
-        echo "testadminpassword" > secrets/NB_GRAPH_ADMIN_PASSWORD.txt
-        echo "testpassword" > secrets/NB_GRAPH_PASSWORD.txt
+        echo "testadminpassword1" > secrets/NB_GRAPH_ADMIN_PASSWORD.txt
+        echo "testpassword1" > secrets/NB_GRAPH_PASSWORD.txt
+
+        # Define local nodes to federate over
+        echo '[{"NodeName": "2 OpenNeuro Datasets", "ApiURL": "http://protected_node-api-1:8000"},{"NodeName": "BIDS Synthetic", "ApiURL": "http://open_node-api-1:8000"}]' > local_nb_nodes.json
       shell: bash
-    
-    - name: Launch services
+
+    - name: Launch Protected node
+      working-directory: protected_node/recipes
       run: |
         docker compose --profile full_stack up -d
+
+    - name: Checkout recipes for Open node (local_node)
+      uses: actions/checkout@v4
+      path: open_node
+
+    - name: Configure Open node
+      working-directory: open_node/recipes
+      run: |
+        cp template.env .env
+
+        sed -i 's|^#\?[[:space:]]\?COMPOSE_PROJECT_NAME=.*|COMPOSE_PROJECT_NAME=open_node|' .env
+        sed -i 's|^#\?[[:space:]]\?NB_GRAPH_PORT_HOST=.*|NB_GRAPH_PORT_HOST=7201|' .env
+        sed -i 's|^#\?[[:space:]]\?NB_NAPI_PORT_HOST=.*|NB_NAPI_PORT_HOST=8001|' .env
+        sed -i 's|^#\?[[:space:]]\?NB_RETURN_AGG=.*|NB_RETURN_AGG=false|' .env
+
+    - name: Launch Open node
+      working-directory: open_node/recipes
+      run: |
+        docker compose --profile local_node up -d
       shell: bash
 
-    - name: Wait for graph setup completion
-      working-directory: ./scripts
+    - name: Wait for graph setup completion for both nodes
       run: |
-        # The log is written at the end of the setup, so we must wait for the file to exist
-        while [ ! -f ./logs/DEPLOY.log ]; do
-          :
+        until [ -f protected_node/recipes/scripts/logs/DEPLOY.log ] && grep -q "Finished setting up the Neurobagel graph backend." protected_node/recipes/scripts/logs/DEPLOY.log; do
+          sleep 1
         done
+        echo "Neurobagel graph backend setup for Protected node done."
 
-        # Once the file exists, we wait for the message that the setup is done
-        echo "DEPLOY.log found."
-
-        # while ! tail -n 0 -f ./logs/DEPLOY.log | grep -q "Finished setting up the Neurobagel graph backend."; do
-        while ! grep -q "Finished setting up the Neurobagel graph backend." ./logs/DEPLOY.log; do
-          :
+        until [ -f open_node/recipes/scripts/logs/DEPLOY.log ] && grep -q "Finished setting up the Neurobagel graph backend." open_node/recipes/scripts/logs/DEPLOY.log; do
+          sleep 1
         done
-        echo "Neurobagel graph backend setup done."
+        echo "Neurobagel graph backend setup for Open node done."
       shell: bash
 
     # TODO: Could factor out below steps into test_setup.yml if we don't care about 
@@ -63,7 +107,13 @@ runs:
       run: |
         docker ps -a
         echo ""
-        for container in neurobagel_node-graph-1 neurobagel_node-api-1 neurobagel_node-federation-1 neurobagel_node-query_federation-1; do
+        for container in \
+            protected_node-graph-1
+            protected_node-api-1
+            protected_node-federation-1
+            protected_node-query_federation-1
+            open_node-graph-1
+            open_node-api-1; do
             if [ -z "$(docker ps --filter "name=$container" --format '{{.Names}}')" ]; then
                 echo -e "Container ${container} is not running\!\n"
                 docker logs ${container}
@@ -73,4 +123,9 @@ runs:
             fi
         done
         echo "All containers are running."
+      shell: bash
+
+    - name: Add nodes to same Docker network
+      run: |
+        docker network connect protected_node_default open_node-api-1
       shell: bash
