@@ -19,7 +19,8 @@ runs:
     # since subsequent steps depend on the checkout action
     - name: Checkout recipes for Protected node (full_stack node)
       uses: actions/checkout@v4
-      path: protected_node/recipes
+      with:
+        path: protected_node/recipes
 
     # Note: OpenNeuro is public data, but we use it for an example protected node here
     # because Neurobagel synthetic data contains instances of all variables and is thus more flexible
@@ -63,10 +64,12 @@ runs:
       working-directory: protected_node/recipes
       run: |
         docker compose --profile full_stack up -d
+      shell: bash
 
     - name: Checkout recipes for Open node (local_node)
       uses: actions/checkout@v4
-      path: open_node
+      with:
+        path: open_node/recipes
 
     - name: Configure Open node
       working-directory: open_node/recipes
@@ -77,6 +80,7 @@ runs:
         sed -i 's|^#\?[[:space:]]\?NB_GRAPH_PORT_HOST=.*|NB_GRAPH_PORT_HOST=7201|' .env
         sed -i 's|^#\?[[:space:]]\?NB_NAPI_PORT_HOST=.*|NB_NAPI_PORT_HOST=8001|' .env
         sed -i 's|^#\?[[:space:]]\?NB_RETURN_AGG=.*|NB_RETURN_AGG=false|' .env
+      shell: bash
 
     - name: Launch Open node
       working-directory: open_node/recipes
