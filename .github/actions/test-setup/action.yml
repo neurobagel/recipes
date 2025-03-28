@@ -115,11 +115,11 @@ runs:
         docker ps -a
         echo ""
         for container in \
-            protected_node-graph-1
-            protected_node-api-1
-            protected_node-federation-1
-            protected_node-query_federation-1
-            open_node-graph-1
+            protected_node-graph-1 \
+            protected_node-api-1 \
+            protected_node-federation-1 \
+            protected_node-query_federation-1 \
+            open_node-graph-1 \
             open_node-api-1; do
             if [ -z "$(docker ps --filter "name=$container" --format '{{.Names}}')" ]; then
                 echo -e "Container ${container} is not running\!\n"
