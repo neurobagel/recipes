@@ -9,14 +9,17 @@ description: 'Run setup steps for a local deployment of a protected and open nod
 runs:
   using: "composite"
   steps:
+    # Note: Calling workflows will likely also require the checkout action,
+    # but we include it here as an extra precaution so that the action can be run independently
+    # since subsequent steps depend on the checkout action
+    - name: Checkout
+      uses: actions/checkout@v4
+
     - name: Create directories for nodes
       run: |
         mkdir protected_node open_node
       shell: bash
 
-    # Note: Calling workflows will likely also require the checkout action,
-    # but we include it here as an extra precaution so that the action can be run independently
-    # since subsequent steps depend on the checkout action
     - name: Checkout recipes for Protected node (full_stack node)
       uses: actions/checkout@v4
       with:
@@ -36,8 +39,8 @@ runs:
         mkdir protected_node/openneuro_mini_data
   
         # Note: Both ds000001 and ds000002 have only sex and age annotations
-        cp protected_node/openneuro-annotations/ds000001.jsonld protected_node/openneuro_mini_data
-        cp protected_node/openneuro-annotations/ds000002.jsonld protected_node/openneuro_mini_data
+        cp protected_node/openneuro-annotations/jsonld/ds000001.jsonld protected_node/openneuro_mini_data
+        cp protected_node/openneuro-annotations/jsonld/ds000002.jsonld protected_node/openneuro_mini_data
       shell: bash
 
     - name: Configure Protected node
