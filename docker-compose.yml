@@ -42,6 +42,7 @@ services:
       NB_GRAPH_USERNAME: ${NB_GRAPH_USERNAME}
       NB_GRAPH_PORT: 7200
       NB_GRAPH_DB: ${NB_GRAPH_DB:-repositories/my_db}
+      NB_GRAPH_MEMORY: ${NB_GRAPH_MEMORY:-2G}
     entrypoint:
       - "/usr/src/neurobagel/scripts/setup.sh"
     working_dir: "/usr/src/neurobagel/scripts"
