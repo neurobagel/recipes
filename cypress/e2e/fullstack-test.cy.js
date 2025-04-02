@@ -88,7 +88,7 @@ describe('When I run an unfiltered query on all nodes', () => {
         cy.get('[data-cy="summary-stats"]').contains("3 datasets");
         cy.get('[data-cy="result-container"]').within(() => {
             cy.get('[data-cy^="card-"]').contains("BIDS synthetic").closest('[data-cy^="card-"]').within(() => {
-                const substrings = ["5 subjects match", "5 total subjects", "Flow", "T1"]
+                const substrings = ["5 subjects match", "5 total subjects", "fMRI", "T1"]
                 substrings.forEach(substring => (
                     cy.contains(substring, {matchCase: false})
                 ))
