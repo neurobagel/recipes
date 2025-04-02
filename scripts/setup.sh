@@ -1,6 +1,13 @@
 #!/bin/bash
 
-/opt/graphdb/dist/bin/graphdb -Dgraphdb.home=/opt/graphdb/home &
+if [[ -z "${NB_GRAPH_MEMORY}" ]]; then
+    echo "NB_GRAPH_MEMORY is not set. Defaulting to 2G."
+    temp_GRAPH_MEM = "-Xmx2G"
+else
+    temp_GRAPH_MEM = "-Xmx${NB_GRAPH_MEMORY}"
+fi
+
+/opt/graphdb/dist/bin/graphdb -Dgraphdb.home=/opt/graphdb/home ${temp_GRAPH_MEM} &
 GRAPHDB_PID=$!
 
 # If secrets files are empty (meaning passwords have not been set or password file paths are incorrect), error out and exit
