@@ -1,3 +1,26 @@
+# v0.5.1 (Sat Apr 05 2025)
+
+#### 🚀 Enhancements
+
+- [ENH] Introduce new NB_GRAPH_MEMORY variable [#125](https://github.com/neurobagel/recipes/pull/125) ([@surchs](https://github.com/surchs))
+
+#### 📝 Documentation
+
+- [DOC] new Graph memory ENV variable [#127](https://github.com/neurobagel/recipes/pull/127) ([@surchs](https://github.com/surchs))
+
+####  🧪 Tests
+
+- [FIX] Fix issues with e2e test [#126](https://github.com/neurobagel/recipes/pull/126) ([@alyssadai](https://github.com/alyssadai))
+- [TST] Add a second open node to the deployment e2e tests [#121](https://github.com/neurobagel/recipes/pull/121) ([@alyssadai](https://github.com/alyssadai))
+- [TST] Set up e2e compatibility test [#118](https://github.com/neurobagel/recipes/pull/118) ([@surchs](https://github.com/surchs) [@alyssadai](https://github.com/alyssadai))
+
+#### Authors: 2
+
+- Alyssa Dai ([@alyssadai](https://github.com/alyssadai))
+- Sebastian Urchs ([@surchs](https://github.com/surchs))
+
+---
+
 # v0.5.0 (Fri Feb 14 2025)
 
 #### 🚀 Enhancements
