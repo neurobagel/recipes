@@ -1,3 +1,15 @@
+# v0.5.2 (Fri Apr 11 2025)
+
+#### 🐛 Bug Fixes
+
+- [FIX] Fix syntax error in setup.sh with setting the GraphDB memory limit (`NB_GRAPH_MEMORY`) [#132](https://github.com/neurobagel/recipes/pull/132) ([@alyssadai](https://github.com/alyssadai))
+
+#### Authors: 1
+
+- Alyssa Dai ([@alyssadai](https://github.com/alyssadai))
+
+---
+
 # v0.5.1 (Sat Apr 05 2025)
 
 #### 🚀 Enhancements
