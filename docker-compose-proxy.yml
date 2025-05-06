@@ -6,11 +6,13 @@ services:
     extends:
       file: docker-compose.yml
       service: graph
+    ports: !override []
 
   api:
     extends:
       file: docker-compose.yml
       service: api
+    ports: !override []
     environment:
       # Replace the below domain with the domain you want to serve the node API from
       VIRTUAL_HOST: localhost
@@ -20,22 +22,24 @@ services:
       LETSENCRYPT_HOST: myservice1.myinstitute.org 
 
   federation:
-   extends:
-    file: docker-compose.yml
-    service: federation
-   environment:
-    # Replace the below domain with the domain you want to serve the federation API from
-    VIRTUAL_HOST: localhost
-    # To change the line below, edit the NB_FAPI_BASE_PATH variable in the .env file
-    VIRTUAL_PATH: ${NB_FAPI_BASE_PATH:-/}
-    VIRTUAL_PORT: 8000
-    # Set the below to the same domain as VIRTUAL_HOST to enable HTTPS
-    LETSENCRYPT_HOST: myservice2.myinstitute.org
+    extends:
+      file: docker-compose.yml
+      service: federation
+    ports: !override []
+    environment:
+      # Replace the below domain with the domain you want to serve the federation API from
+      VIRTUAL_HOST: localhost
+      # To change the line below, edit the NB_FAPI_BASE_PATH variable in the .env file
+      VIRTUAL_PATH: ${NB_FAPI_BASE_PATH:-/}
+      VIRTUAL_PORT: 8000
+      # Set the below to the same domain as VIRTUAL_HOST to enable HTTPS
+      LETSENCRYPT_HOST: myservice2.myinstitute.org
 
   query_federation:
     extends:
       file: docker-compose.yml
       service: query_federation
+    ports: !override []
     environment:
       # Replace the below domain with the domain you want to serve the query tool from
       VIRTUAL_HOST: localhost
