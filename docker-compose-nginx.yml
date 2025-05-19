@@ -10,6 +10,9 @@ services:
     extends:
       file: docker-compose.yml
       service: api
+    # For a production deployment, we want to avoid binding ports to the host to avoid conflicts with
+    # already running services. So here we override the ports exposed in the recipe we expand from and
+    # set the ports to an empty list
     ports: !override []
     environment:
       # Replace the below domain with the domain you want to serve the node API from
@@ -23,6 +26,9 @@ services:
     extends:
       file: docker-compose.yml
       service: federation
+    # For a production deployment, we want to avoid binding ports to the host to avoid conflicts with
+    # already running services. So here we override the ports exposed in the recipe we expand from and
+    # set the ports to an empty list
     ports: !override []
     environment:
       # Replace the below domain with the domain you want to serve the federation API from
@@ -37,6 +43,9 @@ services:
     extends:
       file: docker-compose.yml
       service: query_federation
+    # For a production deployment, we want to avoid binding ports to the host to avoid conflicts with
+    # already running services. So here we override the ports exposed in the recipe we expand from and
+    # set the ports to an empty list
     ports: !override []
     environment:
       # Replace the below domain with the domain you want to serve the query tool from
