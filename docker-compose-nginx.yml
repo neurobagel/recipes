@@ -1,5 +1,3 @@
-
-
 services:
 
   graph:
@@ -15,7 +13,7 @@ services:
     ports: !override []
     environment:
       # Replace the below domain with the domain you want to serve the node API from
-      VIRTUAL_HOST: localhost
+      VIRTUAL_HOST: myservice1.myinstitute.org
       VIRTUAL_PATH: ${NB_NAPI_BASE_PATH:-/}
       VIRTUAL_PORT: 8000
       # Set the below to the same domain as VIRTUAL_HOST to enable HTTPS
@@ -28,7 +26,7 @@ services:
     ports: !override []
     environment:
       # Replace the below domain with the domain you want to serve the federation API from
-      VIRTUAL_HOST: localhost
+      VIRTUAL_HOST: myservice2.myinstitute.org
       # To change the line below, edit the NB_FAPI_BASE_PATH variable in the .env file
       VIRTUAL_PATH: ${NB_FAPI_BASE_PATH:-/}
       VIRTUAL_PORT: 8000
@@ -42,11 +40,11 @@ services:
     ports: !override []
     environment:
       # Replace the below domain with the domain you want to serve the query tool from
-      VIRTUAL_HOST: localhost
+      VIRTUAL_HOST: myservice3.myinstitute.org
       VIRTUAL_PATH: ${NB_QUERY_APP_BASE_PATH:-/}
       VIRTUAL_PORT: 5173
       # Set the below to the same domain as VIRTUAL_HOST to enable HTTPS
-      LETSENCRYPT_HOST: ${HOST_NAME:-localhost}
+      LETSENCRYPT_HOST: myservice3.myinstitute.org
 
   nginx-proxy:
     image: nginxproxy/nginx-proxy
