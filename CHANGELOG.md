@@ -1,3 +1,16 @@
+# v0.6.0 (Sun Jun 22 2025)
+
+#### 🚀 Enhancements
+
+- [ENH] Add reverse proxy deployment recipes [#137](https://github.com/neurobagel/recipes/pull/137) ([@surchs](https://github.com/surchs) [@alyssadai](https://github.com/alyssadai))
+
+#### Authors: 2
+
+- Alyssa Dai ([@alyssadai](https://github.com/alyssadai))
+- Sebastian Urchs ([@surchs](https://github.com/surchs))
+
+---
+
 # v0.5.2 (Fri Apr 11 2025)
 
 #### 🐛 Bug Fixes
