@@ -30,7 +30,7 @@ jobs:
           docker compose --profile full_stack up -d
 
       - name: Set up node env
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 20
       
@@ -92,7 +92,7 @@ jobs:
           docker compose --profile full_stack up -d
 
       - name: Set up node env
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 20
       
