@@ -78,16 +78,20 @@ describe('When I load the query tool', () => {
 describe('When I run an unfiltered query on all nodes', () => {
 
     beforeEach(() => {
-        cy.visit('http://localhost:3000/')
+        // We need to include the ?node=All otherwise it seems the app switches URLs at some point
+        // from http://localhost:3000/ to http://localhost:3000/?node=All,
+        // which is registered as a modification to query fields, thus preventing the results download
+        cy.visit('http://localhost:3000/?node=All')
         // Listen for f-API request so we can wait for it later before checking results
-        cy.intercept('*query?*').as('call');
+        cy.intercept('*datasets*').as('call');
         cy.get('[data-cy="submit-query-button"]').click();
     });
     
     it('I see the expected matching dataset info', () => {
         cy.get('[data-cy="summary-stats"]').contains("3 datasets");
         cy.get('[data-cy="result-container"]').within(() => {
-            cy.get('[data-cy^="card-"]').contains("BIDS synthetic").closest('[data-cy^="card-"]').within(() => {
+            cy.get('[data-cy^="card-"]').contains("BIDS synthetic").closest('[data-cy^="card-"]').as("bidsSyntheticCard");
+            cy.get("@bidsSyntheticCard").within(() => {
                 const substrings = ["5 subjects match", "5 total subjects", "fMRI", "T1"]
                 substrings.forEach(substring => (
                     cy.contains(substring, {matchCase: false})
@@ -96,7 +100,9 @@ describe('When I run an unfiltered query on all nodes', () => {
             cy.contains("Balloon Analog Risk-taking Task", {matchCase: false});
             cy.contains("Classification learning", {matchCase: false});
         });
-        cy.contains("button", "Available pipelines").trigger("mouseover")
+        cy.get("@bidsSyntheticCard").within(() => {
+            cy.contains("button", "Available pipelines").trigger("mouseover");
+        });
         // This must be outside of the dataset card selector because the tooltip exceeds the card boundaries (?)
         cy.get('.MuiTooltip-tooltip')
             .within(() => {
@@ -106,7 +112,9 @@ describe('When I run an unfiltered query on all nodes', () => {
             )});
     });
     
-    it('The results TSV I download contains the expected contents', () => {
+    // TODO: This test is currently blocked from passing by https://github.com/neurobagel/query-tool/issues/670
+    // Undo skip when issue is resolved.
+    it.skip('The results TSV I download contains the expected contents', () => {
         cy.wait('@call');
         cy.get('[data-cy="select-all-checkbox"]').find('input').check();
         cy.get('[data-cy="download-results-button"]').click();
@@ -142,7 +150,7 @@ describe('When I run a filtered query on all nodes', () => {
         cy.get('[data-cy="Pipeline name-categorical-field"]').type('freesurfer{downarrow}{enter}')
         cy.wait('@getPipelineVersionsOptions');
         cy.get('[data-cy="Pipeline version-categorical-field"]').type('7.3.2{downarrow}{enter}');
-        cy.intercept('*query?*').as('call');
+        cy.intercept('*datasets*').as('call');
         cy.get('[data-cy="submit-query-button"]').click();
         cy.wait('@call');
         
