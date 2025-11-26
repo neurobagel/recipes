@@ -19,6 +19,7 @@ services:
       NB_API_ALLOWED_ORIGINS: ${NB_NAPI_ALLOWED_ORIGINS:-"*"}
       NB_ENABLE_AUTH: ${NB_ENABLE_AUTH:-false}
       NB_QUERY_CLIENT_ID: ${NB_QUERY_CLIENT_ID}
+      NB_CONFIG: ${NB_CONFIG:-Neurobagel}
     volumes:
       - "./scripts/api_entrypoint.sh:/usr/src/api_entrypoint.sh"
     entrypoint:
