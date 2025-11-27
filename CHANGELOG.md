@@ -1,3 +1,24 @@
+# v0.7.0 (Thu Nov 27 2025)
+
+#### 🚀 Enhancements
+
+- [ENH] Document `NB_CONFIG` as an experimental environment variable [#160](https://github.com/neurobagel/recipes/pull/160) ([@alyssadai](https://github.com/alyssadai))
+
+#### ⚠️ Pushed to `main`
+
+- [REF] Update example graph file ([@surchs](https://github.com/surchs))
+
+####  🧪 Tests
+
+- [TST] Update e2e tests to work with updated OpenNeuro JSONLDs [#156](https://github.com/neurobagel/recipes/pull/156) ([@alyssadai](https://github.com/alyssadai))
+
+#### Authors: 2
+
+- Alyssa Dai ([@alyssadai](https://github.com/alyssadai))
+- Sebastian Urchs ([@surchs](https://github.com/surchs))
+
+---
+
 # v0.6.0 (Sun Jun 22 2025)
 
 #### 🚀 Enhancements
