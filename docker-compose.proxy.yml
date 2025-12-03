@@ -1,0 +1,53 @@
+services:
+
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    container_name: nginx-proxy
+    profiles:
+      - "nginx"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/nginx/reverse_proxy.conf:/etc/nginx/conf.d/reverse_proxy.conf
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - certs:/etc/nginx/certs:ro
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  acme-companion:
+    image: nginxproxy/acme-companion
+    container_name: nginx-proxy-acme
+    profiles:
+      - "nginx"
+    volumes_from:
+      - nginx-proxy
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - acme:/etc/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    profiles:
+      - "caddy"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  vhost:
+  html:
+  certs:
+  acme:
+  caddy_data:
+  caddy_config:
+
+networks:
+  proxy-net:
+    name: ${PROXY_NETWORK_NAME:-NB_proxynet}
