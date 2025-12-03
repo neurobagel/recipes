@@ -1,0 +1,70 @@
+services:
+
+  api_prod:
+    extends:
+      file: docker-compose.yml
+      service: n_api
+    # For a production deployment, we want to avoid binding ports to the host to avoid conflicts with
+    # already running services. So here we override the ports exposed in the recipe we expand from and
+    # set the ports to an empty list
+    ports: !override []
+    environment:
+      # Replace the below domain with the domain you want to serve the node API from
+      VIRTUAL_HOST: myservice1.myinstitute.org
+      VIRTUAL_PATH: ${NB_NAPI_BASE_PATH:-/}
+      VIRTUAL_PORT: 8000
+      # Set the below to the same domain as VIRTUAL_HOST to enable HTTPS
+      LETSENCRYPT_HOST: myservice1.myinstitute.org 
+  
+  graph_prod:
+    extends:
+      file: docker-compose.yml
+      service: graph
+    ports: !override []
+
+  f_api_prod:
+    extends:
+      file: docker-compose.yml
+      service: f_api
+    # For a production deployment, we want to avoid binding ports to the host to avoid conflicts with
+    # already running services. So here we override the ports exposed in the recipe we expand from and
+    # set the ports to an empty list
+    ports: !override []
+    environment:
+      # Replace the below domain with the domain you want to serve the federation API from
+      VIRTUAL_HOST: myservice2.myinstitute.org
+      # To change the line below, edit the NB_FAPI_BASE_PATH variable in the .env file
+      VIRTUAL_PATH: ${NB_FAPI_BASE_PATH:-/}
+      VIRTUAL_PORT: 8000
+      # Set the below to the same domain as VIRTUAL_HOST to enable HTTPS
+      LETSENCRYPT_HOST: myservice2.myinstitute.org
+
+  query_prod:
+    extends:
+      file: docker-compose.yml
+      service: query
+    # For a production deployment, we want to avoid binding ports to the host to avoid conflicts with
+    # already running services. So here we override the ports exposed in the recipe we expand from and
+    # set the ports to an empty list
+    ports: !override []
+    environment:
+      # Replace the below domain with the domain you want to serve the query tool from
+      VIRTUAL_HOST: myservice3.myinstitute.org
+      VIRTUAL_PATH: ${NB_QUERY_APP_BASE_PATH:-/}
+      VIRTUAL_PORT: 5173
+      # Set the below to the same domain as VIRTUAL_HOST to enable HTTPS
+      LETSENCRYPT_HOST: myservice3.myinstitute.org
+
+secrets:
+  db_admin_password:
+    file: ${NB_GRAPH_SECRETS_PATH:-./secrets}/NB_GRAPH_ADMIN_PASSWORD.txt
+  db_user_password:
+    file: ${NB_GRAPH_SECRETS_PATH:-./secrets}/NB_GRAPH_PASSWORD.txt
+
+volumes:
+  graphdb_home:
+
+networks:
+  proxy-net:
+    external: true
+    name: ${PROXY_NETWORK_NAME:-NB_proxynet}
