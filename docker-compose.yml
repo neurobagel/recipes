@@ -3,7 +3,8 @@ services:
   n_api:
     image: "neurobagel/api:${NB_NAPI_TAG:-latest}"
     profiles:
-      - "node"
+      - "local_node"
+      - "full_stack"
     ports:
       - "${NB_NAPI_PORT_HOST:-8000}:8000"
     environment:
@@ -29,7 +30,8 @@ services:
   graph:
     image: "ontotext/graphdb:10.3.1"
     profiles:
-      - "node"
+      - "local_node"
+      - "full_stack"
     volumes:
       - "graphdb_home:/opt/graphdb/home"
       - "./scripts:/usr/src/neurobagel/scripts"
@@ -52,7 +54,8 @@ services:
   f_api:
     image: "neurobagel/federation_api:${NB_FAPI_TAG:-latest}"
     profiles:
-      - "portal"
+      - "local_federation"
+      - "full_stack"
     ports:
       - "${NB_FAPI_PORT_HOST:-8080}:8000"
     volumes:
@@ -67,7 +70,8 @@ services:
   query:
     image: "neurobagel/query_tool:${NB_QUERY_TAG:-latest}"
     profiles:
-      - "portal"
+      - "local_federation"
+      - "full_stack"
     ports:
       - "${NB_QUERY_PORT_HOST:-3000}:5173"
     environment:
