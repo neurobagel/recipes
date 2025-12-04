@@ -1,6 +1,6 @@
 services:
 
-  api:
+  n_api:
     image: "neurobagel/api:${NB_NAPI_TAG:-latest}"
     profiles:
       - "local_node"
@@ -51,7 +51,7 @@ services:
       - db_admin_password
       - db_user_password
 
-  federation:
+  f_api:
     image: "neurobagel/federation_api:${NB_FAPI_TAG:-latest}"
     profiles:
       - "local_federation"
@@ -67,7 +67,7 @@ services:
       NB_ENABLE_AUTH: ${NB_ENABLE_AUTH:-false}
       NB_QUERY_CLIENT_ID: ${NB_QUERY_CLIENT_ID}
 
-  query_federation:
+  query:
     image: "neurobagel/query_tool:${NB_QUERY_TAG:-latest}"
     profiles:
       - "local_federation"
