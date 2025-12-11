@@ -4,6 +4,8 @@ services:
     extends:
       file: docker-compose.yml
       service: n_api
+    profiles:
+      - "node"
     # For a production deployment, we want to avoid binding ports to the host to avoid conflicts with
     # already running services. So here we override the ports exposed in the recipe we expand from and
     # set the ports to an empty list
@@ -20,12 +22,16 @@ services:
     extends:
       file: docker-compose.yml
       service: graph
+    profiles:
+      - "node"
     ports: !override []
 
   f_api_prod:
     extends:
       file: docker-compose.yml
       service: f_api
+    profiles:
+      - "portal"
     # For a production deployment, we want to avoid binding ports to the host to avoid conflicts with
     # already running services. So here we override the ports exposed in the recipe we expand from and
     # set the ports to an empty list
@@ -43,6 +49,8 @@ services:
     extends:
       file: docker-compose.yml
       service: query
+    profiles:
+      - "node"
     # For a production deployment, we want to avoid binding ports to the host to avoid conflicts with
     # already running services. So here we override the ports exposed in the recipe we expand from and
     # set the ports to an empty list
