@@ -69,6 +69,12 @@ def get_homepage_url(references_and_links: list[str]) -> str | None:
 
 
 def extract_dataset_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dict:
+    """
+    Validate and extract dataset-level metadata from all Neurobagel dataset JSONLD files in a directory.
+    
+    Validated JSONLD files are copied to the output directory,
+    and a dictionary mapping dataset UUIDs to their metadata is returned.
+    """
     dataset_metadata_lookup = {}
     for jsonld_path in jsonld_dir.glob("*.jsonld"):
         logger.info("Processing file: %s", jsonld_path.name)
@@ -91,7 +97,7 @@ def extract_dataset_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dict
     return dataset_metadata_lookup
 
 
-def main():
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Validate and extract dataset-level metadata from Neurobagel dataset JSONLD files."
     )
@@ -105,9 +111,8 @@ def main():
         type=lambda p: Path(p).resolve(),
         help="Directory to save validated JSONLD files and dataset metadata JSON file."
     )
-    
     args = parser.parse_args()
-    
+
     dataset_metadata_lookup = extract_dataset_metadata_to_dict(args.input_dir, args.output_dir)
 
     with open(args.output_dir / "dataset_metadata.json", "w", encoding="utf-8") as f:
