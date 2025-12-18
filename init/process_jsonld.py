@@ -89,6 +89,12 @@ def extract_dataset_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dict
                 if jsonld_key == "hasReferencesAndLinks":
                     if homepage_url := get_homepage_url(dataset[jsonld_key]):
                         dataset_attributes["homepage"] = homepage_url
+                elif jsonld_key == "hasPortalURI":
+                    logger.warning(
+                        f"{jsonld_path.name} uses a deprecated 'hasPortalURI' key for the dataset. "
+                        "This URL will be stored as the access link for the dataset instead. "
+                        "We recommend updating your JSONLD using the latest version of the Neurobagel CLI."
+                    )
                 dataset_attributes[attribute_name] = dataset[jsonld_key]
         dataset_metadata_lookup[dataset_uuid] = dataset_attributes
 
