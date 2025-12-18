@@ -1,12 +1,12 @@
+# This file is adapted from https://github.com/neurobagel/bagel-cli/blob/main/bagel/models.py
+# but is modified to ignore extra fields and include only the 'nb' namespace mapping.
+
 from collections import namedtuple
 from enum import Enum
 import uuid
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, HttpUrl
-
-# from bagel.dataset_description_model import AccessType
-# from bagel.mappings import NB
 
 Namespace = namedtuple("Namespace", ["pf", "url"])
 NB = Namespace("nb", "http://neurobagel.org/vocab/")
