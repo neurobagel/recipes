@@ -4,7 +4,7 @@ import logging
 import argparse
 import shutil
 from pydantic import ValidationError, TypeAdapter, HttpUrl
-from data_init.utils import models
+from init_data.utils import models
 
 logging.basicConfig(
     level=logging.INFO,
