@@ -1,5 +1,10 @@
 services:
 
+  init_data:
+    extends:
+      file: docker-compose.yml
+      service: init_data
+
   graph:
     extends:
       file: docker-compose.yml
@@ -87,6 +92,7 @@ secrets:
 
 volumes:
   graphdb_home:
+  neurobagel_data:
   vhost:
   html:
   certs:
