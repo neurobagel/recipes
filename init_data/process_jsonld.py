@@ -77,12 +77,15 @@ def extract_dataset_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dict
     and a dictionary mapping dataset UUIDs to their metadata is returned.
     """    
     dataset_metadata_lookup = {}
+    excluded_jsonlds = []
 
     num_input_jsonlds = len(list(jsonld_dir.glob("*.jsonld")))
     for idx, jsonld_path in enumerate(jsonld_dir.glob("*.jsonld"), start=1):
-        logger.info(f"({idx}/{num_input_jsonlds}) Processing file: {jsonld_path.name}")
+        filename = jsonld_path.name
+        logger.info(f"({idx}/{num_input_jsonlds}) Processing file: {filename}")
         dataset = load_and_validate_jsonld_dataset(jsonld_path)
         if dataset is None:
+            excluded_jsonlds.append(filename)
             continue
 
         dataset_uuid = dataset["identifier"]
@@ -94,7 +97,7 @@ def extract_dataset_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dict
                         dataset_attributes["homepage"] = homepage_url
                 elif jsonld_key == "hasPortalURI":
                     logger.warning(
-                        f"{jsonld_path.name} uses a deprecated dataset-level 'hasPortalURI' key. "
+                        f"{filename} uses a deprecated dataset-level 'hasPortalURI' key. "
                         "This URL will be stored as the access link for the dataset instead. "
                         "We recommend updating your JSONLD using the latest version of the Neurobagel CLI."
                     )
@@ -107,6 +110,11 @@ def extract_dataset_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dict
         f"Dataset metadata successfully extracted from {len(dataset_metadata_lookup)}/{num_input_jsonlds} JSONLD files; "
         "uploading these JSONLD files to the graph store."
     )
+    if excluded_jsonlds:
+        logger.info(
+            "The following JSONLD files failed validation and will not be uploaded:\n"
+            f"{'\n'.join(excluded_jsonlds)}"
+        )
     return dataset_metadata_lookup
 
 
