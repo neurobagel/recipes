@@ -107,13 +107,13 @@ def extract_dataset_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dict
         shutil.copy2(jsonld_path, output_dir)
 
     logger.info(
-        f"Dataset metadata successfully extracted from {len(dataset_metadata_lookup)}/{num_input_jsonlds} JSONLD files; "
-        "uploading these JSONLD files to the graph store."
+        f"Dataset metadata successfully extracted from {len(dataset_metadata_lookup)}/{num_input_jsonlds} JSONLD file(s); "
+        "will upload the file(s) to the graph store."
     )
     if excluded_jsonlds:
-        logger.info(
-            "The following JSONLD files failed validation and will not be uploaded:\n"
-            f"{'\n'.join(excluded_jsonlds)}"
+        logger.warning(
+            f"The following {len(excluded_jsonlds)} JSONLD file(s) failed validation and will not be uploaded:\n"
+            + '\n'.join(excluded_jsonlds)
         )
     return dataset_metadata_lookup
 
@@ -142,4 +142,4 @@ if __name__ == "__main__":
     dataset_metadata_lookup = extract_dataset_metadata_to_dict(args.input_dir, args.output_dir)
 
     with open(args.output_dir / "dataset_metadata.json", "w", encoding="utf-8") as f:
-        json.dump(dataset_metadata_lookup, f, indent=4)
+        json.dump(dataset_metadata_lookup, f, indent=2, ensure_ascii=False)
