@@ -3,8 +3,6 @@ services:
   nginx-proxy:
     image: nginxproxy/nginx-proxy
     container_name: nginx-proxy
-    profiles:
-      - "nginx"
     ports:
       - "80:80"
       - "443:443"
@@ -18,8 +16,6 @@ services:
   acme-companion:
     image: nginxproxy/acme-companion
     container_name: nginx-proxy-acme
-    profiles:
-      - "nginx"
     volumes_from:
       - nginx-proxy
     volumes:
@@ -27,26 +23,11 @@ services:
       - acme:/etc/acme.sh
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
-  caddy:
-    image: caddy:latest
-    container_name: caddy
-    profiles:
-      - "caddy"
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
-      - caddy_data:/data
-      - caddy_config:/config
-
 volumes:
   vhost:
   html:
   certs:
   acme:
-  caddy_data:
-  caddy_config:
 
 networks:
   proxy-net:
