@@ -4,7 +4,7 @@ import logging
 import argparse
 import shutil
 from pydantic import ValidationError, TypeAdapter, HttpUrl
-from init.utils import models
+from data_init.utils import models
 
 logging.basicConfig(
     level=logging.INFO,
@@ -75,10 +75,12 @@ def extract_dataset_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dict
     
     Validated JSONLD files are copied to the output directory,
     and a dictionary mapping dataset UUIDs to their metadata is returned.
-    """
+    """    
     dataset_metadata_lookup = {}
-    for jsonld_path in jsonld_dir.glob("*.jsonld"):
-        logger.info("Processing file: %s", jsonld_path.name)
+
+    num_input_jsonlds = len(list(jsonld_dir.glob("*.jsonld")))
+    for idx, jsonld_path in enumerate(jsonld_dir.glob("*.jsonld"), start=1):
+        logger.info(f"({idx}/{num_input_jsonlds}) Processing file: {jsonld_path.name}")
         dataset = load_and_validate_jsonld_dataset(jsonld_path)
         if dataset is None:
             continue
@@ -100,11 +102,16 @@ def extract_dataset_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dict
         dataset_metadata_lookup[dataset_uuid] = dataset_attributes
 
         shutil.copy2(jsonld_path, output_dir)
-    
+
+    logger.info(
+        f"Dataset metadata successfully extracted from {len(dataset_metadata_lookup)}/{num_input_jsonlds} JSONLD files; "
+        "uploading these JSONLD files to the graph store."
+    )
     return dataset_metadata_lookup
 
 
-if __name__ == "__main__":
+def parse_arguments():
+    """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         description="Validate and extract dataset-level metadata from Neurobagel dataset JSONLD files."
     )
@@ -118,7 +125,11 @@ if __name__ == "__main__":
         type=lambda p: Path(p).resolve(),
         help="Directory to save validated JSONLD files and dataset metadata JSON file."
     )
-    args = parser.parse_args()
+    return parser.parse_args()
+    
+
+if __name__ == "__main__":
+    args = parse_arguments()
 
     dataset_metadata_lookup = extract_dataset_metadata_to_dict(args.input_dir, args.output_dir)
 
