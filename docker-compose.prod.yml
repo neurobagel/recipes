@@ -11,10 +11,10 @@ services:
     # set the ports to an empty list
     ports: !override []
     environment:
-      VIRTUAL_HOST: ${NB_NAPI_DOMAIN:-${NB_deploy_domain}}
+      VIRTUAL_HOST: ${NB_NAPI_DOMAIN:-${NB_DEPLOY_DOMAIN}}
       VIRTUAL_PATH: ${NB_NAPI_BASE_PATH:-/}
       VIRTUAL_PORT: 8000
-      LETSENCRYPT_HOST: ${NB_NAPI_DOMAIN:-${NB_deploy_domain}}
+      LETSENCRYPT_HOST: ${NB_NAPI_DOMAIN:-${NB_DEPLOY_DOMAIN}}
   
   graph_prod:
     extends:
@@ -35,10 +35,10 @@ services:
     # set the ports to an empty list
     ports: !override []
     environment:
-      VIRTUAL_HOST: ${NB_FAPI_DOMAIN:-${NB_deploy_domain}}
+      VIRTUAL_HOST: ${NB_FAPI_DOMAIN:-${NB_DEPLOY_DOMAIN}}
       VIRTUAL_PATH: ${NB_FAPI_BASE_PATH:-/}
       VIRTUAL_PORT: 8000
-      LETSENCRYPT_HOST: ${NB_FAPI_DOMAIN:-${NB_deploy_domain}}
+      LETSENCRYPT_HOST: ${NB_FAPI_DOMAIN:-${NB_DEPLOY_DOMAIN}}
 
   query_prod:
     extends:
@@ -52,11 +52,11 @@ services:
     ports: !override []
     environment:
       # Replace the below domain with the domain you want to serve the query tool from
-      VIRTUAL_HOST: ${NB_QUERY_DOMAIN:-${NB_deploy_domain}}
+      VIRTUAL_HOST: ${NB_QUERY_DOMAIN:-${NB_DEPLOY_DOMAIN}}
       VIRTUAL_PATH: ${NB_QUERY_APP_BASE_PATH:-/}
       VIRTUAL_PORT: 5173
       # Set the below to the same domain as VIRTUAL_HOST to enable HTTPS
-      LETSENCRYPT_HOST: ${NB_QUERY_DOMAIN:-${NB_deploy_domain}}
+      LETSENCRYPT_HOST: ${NB_QUERY_DOMAIN:-${NB_DEPLOY_DOMAIN}}
 
 secrets:
   db_admin_password:
