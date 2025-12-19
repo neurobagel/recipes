@@ -48,6 +48,7 @@ def load_and_validate_jsonld_dataset(file_path: Path) -> dict | None:
             f"Validation errors: {str(err)}"
         )
         return None
+    logger.info(f"File validated: {file_path.name}")
     return jsonld
 
 
