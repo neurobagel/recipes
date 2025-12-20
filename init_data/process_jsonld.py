@@ -69,14 +69,14 @@ def get_homepage_url(references_and_links: list[str]) -> str | None:
     )
 
 
-def extract_dataset_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dict:
+def extract_datasets_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dict:
     """
     Validate and extract dataset-level metadata from all Neurobagel dataset JSONLD files in a directory.
     
     Validated JSONLD files are copied to the output directory,
     and a dictionary mapping dataset UUIDs to their metadata is returned.
     """    
-    dataset_metadata_lookup = {}
+    datasets_metadata_lookup = {}
     excluded_jsonlds = []
 
     num_input_jsonlds = len(list(jsonld_dir.glob("*.jsonld")))
@@ -102,12 +102,12 @@ def extract_dataset_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dict
                         "We recommend updating your JSONLD using the latest version of the Neurobagel CLI."
                     )
                 dataset_attributes[attribute_name] = dataset[jsonld_key]
-        dataset_metadata_lookup[dataset_uuid] = dataset_attributes
+        datasets_metadata_lookup[dataset_uuid] = dataset_attributes
 
         shutil.copy2(jsonld_path, output_dir)
 
     logger.info(
-        f"Dataset metadata successfully extracted from {len(dataset_metadata_lookup)}/{num_input_jsonlds} JSONLD file(s); "
+        f"Dataset metadata successfully extracted from {len(datasets_metadata_lookup)}/{num_input_jsonlds} JSONLD file(s); "
         "will upload the file(s) to the graph store."
     )
     if excluded_jsonlds:
@@ -115,7 +115,7 @@ def extract_dataset_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dict
             f"The following {len(excluded_jsonlds)} JSONLD file(s) failed validation and will not be uploaded:\n"
             + '\n'.join(excluded_jsonlds)
         )
-    return dataset_metadata_lookup
+    return datasets_metadata_lookup
 
 
 def parse_arguments():
@@ -139,7 +139,7 @@ def parse_arguments():
 if __name__ == "__main__":
     args = parse_arguments()
 
-    dataset_metadata_lookup = extract_dataset_metadata_to_dict(args.input_dir, args.output_dir)
+    datasets_metadata_lookup = extract_datasets_metadata_to_dict(args.input_dir, args.output_dir)
 
-    with open(args.output_dir / "dataset_metadata.json", "w", encoding="utf-8") as f:
-        json.dump(dataset_metadata_lookup, f, indent=2, ensure_ascii=False)
+    with open(args.output_dir / "datasets_metadata.json", "w", encoding="utf-8") as f:
+        json.dump(datasets_metadata_lookup, f, indent=2, ensure_ascii=False)
