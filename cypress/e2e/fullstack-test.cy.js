@@ -59,7 +59,7 @@ describe('When I load the query tool', () => {
         
         // Imaging modality
         cy.get('[data-cy="Imaging modality-categorical-field"]').click();
-        cy.get('[role="listbox"]').contains("T1 Weighted");
+        cy.get('[role="listbox"]').contains("T1-weighted image");
         cy.get('[data-cy="Imaging modality-categorical-field"]').click();
 
         // Pipeline Name
@@ -92,7 +92,7 @@ describe('When I run an unfiltered query on all nodes', () => {
         cy.get('[data-cy="result-container"]').within(() => {
             cy.get('[data-cy^="card-"]').contains("BIDS synthetic").closest('[data-cy^="card-"]').as("bidsSyntheticCard");
             cy.get("@bidsSyntheticCard").within(() => {
-                const substrings = ["5 subjects match", "5 total subjects", "fMRI", "T1"]
+                const substrings = ["5 subjects match", "5 total subjects", "BOLD", "T1W"]
                 substrings.forEach(substring => (
                     cy.contains(substring, {matchCase: false})
                 ))
