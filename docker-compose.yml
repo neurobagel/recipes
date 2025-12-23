@@ -27,6 +27,7 @@ services:
       NB_GRAPH_ADDRESS: graph
       NB_GRAPH_PORT: 7200
       NB_GRAPH_DB: ${NB_GRAPH_DB:-repositories/my_db}
+      NB_DATASETS_METADATA_PATH: /data/datasets_metadata.json
       NB_RETURN_AGG: ${NB_RETURN_AGG:-true}
       NB_MIN_CELL_SIZE: ${NB_MIN_CELL_SIZE:-0}
       NB_API_PORT: 8000
