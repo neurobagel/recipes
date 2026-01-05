@@ -4,7 +4,7 @@ import logging
 import argparse
 import shutil
 from pydantic import ValidationError, TypeAdapter, HttpUrl
-from init.utils import models
+from init_data.utils import models
 
 logging.basicConfig(
     level=logging.INFO,
@@ -48,6 +48,7 @@ def load_and_validate_jsonld_dataset(file_path: Path) -> dict | None:
             f"Validation errors: {str(err)}"
         )
         return None
+    logger.info(f"File validated: {file_path.name}")
     return jsonld
 
 
@@ -68,18 +69,23 @@ def get_homepage_url(references_and_links: list[str]) -> str | None:
     )
 
 
-def extract_dataset_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dict:
+def extract_datasets_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dict:
     """
     Validate and extract dataset-level metadata from all Neurobagel dataset JSONLD files in a directory.
     
     Validated JSONLD files are copied to the output directory,
     and a dictionary mapping dataset UUIDs to their metadata is returned.
-    """
-    dataset_metadata_lookup = {}
-    for jsonld_path in jsonld_dir.glob("*.jsonld"):
-        logger.info("Processing file: %s", jsonld_path.name)
+    """    
+    datasets_metadata_lookup = {}
+    excluded_jsonlds = []
+
+    num_input_jsonlds = len(list(jsonld_dir.glob("*.jsonld")))
+    for idx, jsonld_path in enumerate(jsonld_dir.glob("*.jsonld"), start=1):
+        filename = jsonld_path.name
+        logger.info(f"({idx}/{num_input_jsonlds}) Processing file: {filename}")
         dataset = load_and_validate_jsonld_dataset(jsonld_path)
         if dataset is None:
+            excluded_jsonlds.append(filename)
             continue
 
         dataset_uuid = dataset["identifier"]
@@ -91,19 +97,29 @@ def extract_dataset_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dict
                         dataset_attributes["homepage"] = homepage_url
                 elif jsonld_key == "hasPortalURI":
                     logger.warning(
-                        f"{jsonld_path.name} uses a deprecated 'hasPortalURI' key for the dataset. "
+                        f"{filename} uses a deprecated dataset-level 'hasPortalURI' key. "
                         "This URL will be stored as the access link for the dataset instead. "
                         "We recommend updating your JSONLD using the latest version of the Neurobagel CLI."
                     )
                 dataset_attributes[attribute_name] = dataset[jsonld_key]
-        dataset_metadata_lookup[dataset_uuid] = dataset_attributes
+        datasets_metadata_lookup[dataset_uuid] = dataset_attributes
 
         shutil.copy2(jsonld_path, output_dir)
-    
-    return dataset_metadata_lookup
+
+    logger.info(
+        f"Dataset metadata successfully extracted from {len(datasets_metadata_lookup)}/{num_input_jsonlds} JSONLD file(s); "
+        "will upload the file(s) to the graph store."
+    )
+    if excluded_jsonlds:
+        logger.warning(
+            f"The following {len(excluded_jsonlds)} JSONLD file(s) failed validation and will not be uploaded:\n"
+            + '\n'.join(excluded_jsonlds)
+        )
+    return datasets_metadata_lookup
 
 
-if __name__ == "__main__":
+def parse_arguments():
+    """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         description="Validate and extract dataset-level metadata from Neurobagel dataset JSONLD files."
     )
@@ -117,9 +133,13 @@ if __name__ == "__main__":
         type=lambda p: Path(p).resolve(),
         help="Directory to save validated JSONLD files and dataset metadata JSON file."
     )
-    args = parser.parse_args()
+    return parser.parse_args()
+    
 
-    dataset_metadata_lookup = extract_dataset_metadata_to_dict(args.input_dir, args.output_dir)
+if __name__ == "__main__":
+    args = parse_arguments()
 
-    with open(args.output_dir / "dataset_metadata.json", "w", encoding="utf-8") as f:
-        json.dump(dataset_metadata_lookup, f, indent=4)
+    datasets_metadata_lookup = extract_datasets_metadata_to_dict(args.input_dir, args.output_dir)
+
+    with open(args.output_dir / "datasets_metadata.json", "w", encoding="utf-8") as f:
+        json.dump(datasets_metadata_lookup, f, indent=2, ensure_ascii=False)

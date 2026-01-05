@@ -1,10 +1,25 @@
 services:
 
+  init_data:
+    profiles:
+      - "local_node"
+      - "full_stack"
+    build:
+      context: ./init_data
+    volumes:
+      - "${LOCAL_GRAPH_DATA:-./data}:/input_data"
+      - "neurobagel_data:/data"
+    command: >
+      sh -euxc "rm -rf /data/* && python -m init_data.process_jsonld /input_data /data"
+
   api:
     image: "neurobagel/api:${NB_NAPI_TAG:-latest}"
     profiles:
       - "local_node"
       - "full_stack"
+    depends_on:
+      init_data:
+        condition: service_completed_successfully
     ports:
       - "${NB_NAPI_PORT_HOST:-8000}:8000"
     environment:
@@ -12,6 +27,7 @@ services:
       NB_GRAPH_ADDRESS: graph
       NB_GRAPH_PORT: 7200
       NB_GRAPH_DB: ${NB_GRAPH_DB:-repositories/my_db}
+      NB_DATASETS_METADATA_PATH: /data/datasets_metadata.json
       NB_RETURN_AGG: ${NB_RETURN_AGG:-true}
       NB_MIN_CELL_SIZE: ${NB_MIN_CELL_SIZE:-0}
       NB_API_PORT: 8000
@@ -22,6 +38,7 @@ services:
       NB_CONFIG: ${NB_CONFIG:-Neurobagel}
     volumes:
       - "./scripts/api_entrypoint.sh:/usr/src/api_entrypoint.sh"
+      - "neurobagel_data:/data"
     entrypoint:
       - "/usr/src/api_entrypoint.sh"
     secrets:
@@ -32,11 +49,14 @@ services:
     profiles:
       - "local_node"
       - "full_stack"
+    depends_on:
+      init_data:
+        condition: service_completed_successfully
     volumes:
       - "graphdb_home:/opt/graphdb/home"
       - "./scripts:/usr/src/neurobagel/scripts"
       - "./vocab:/usr/src/neurobagel/vocab"
-      - "${LOCAL_GRAPH_DATA:-./data}:/data"
+      - "neurobagel_data:/data"
     ports:
       - "${NB_GRAPH_PORT_HOST:-7200}:7200"
     environment:
@@ -89,3 +109,4 @@ secrets:
 
 volumes:
   graphdb_home:
+  neurobagel_data:
