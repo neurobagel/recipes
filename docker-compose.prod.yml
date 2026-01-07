@@ -1,6 +1,6 @@
 services:
 
-  api_prod:
+  api:
     extends:
       file: docker-compose.yml
       service: n_api
@@ -16,15 +16,18 @@ services:
       VIRTUAL_PORT: 8000
       LETSENCRYPT_HOST: ${NB_NAPI_DOMAIN:-${NB_DEPLOY_DOMAIN}}
   
-  graph_prod:
+  graph:
     extends:
       file: docker-compose.yml
       service: graph
     profiles:
       - "node"
+    # For a production deployment, we want to avoid binding ports to the host to avoid conflicts with
+    # already running services. So here we override the ports exposed in the recipe we expand from and
+    # set the ports to an empty list
     ports: !override []
 
-  f_api_prod:
+  f_api:
     extends:
       file: docker-compose.yml
       service: f_api
@@ -40,7 +43,7 @@ services:
       VIRTUAL_PORT: 8000
       LETSENCRYPT_HOST: ${NB_FAPI_DOMAIN:-${NB_DEPLOY_DOMAIN}}
 
-  query_prod:
+  query:
     extends:
       file: docker-compose.yml
       service: query
@@ -51,6 +54,7 @@ services:
     # set the ports to an empty list
     ports: !override []
     environment:
+      NB_API_QUERY_URL: https://${NB_FAPI_DOMAIN:-${NB_DEPLOY_DOMAIN}}${NB_FAPI_BASE_PATH}
       # Replace the below domain with the domain you want to serve the query tool from
       VIRTUAL_HOST: ${NB_QUERY_DOMAIN:-${NB_DEPLOY_DOMAIN}}
       VIRTUAL_PATH: ${NB_QUERY_APP_BASE_PATH:-/}
