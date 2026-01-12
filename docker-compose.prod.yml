@@ -15,6 +15,9 @@ services:
       VIRTUAL_PATH: ${NB_NAPI_BASE_PATH:-/}
       VIRTUAL_PORT: 8000
       LETSENCRYPT_HOST: ${NB_NAPI_DOMAIN:-${NB_DEPLOY_DOMAIN}}
+    networks:
+      - proxy-net
+      - default
   
   graph:
     extends:
@@ -26,6 +29,8 @@ services:
     # already running services. So here we override the ports exposed in the recipe we expand from and
     # set the ports to an empty list
     ports: !override []
+    networks:
+      - default
 
   f_api:
     extends:
@@ -42,6 +47,8 @@ services:
       VIRTUAL_PATH: ${NB_FAPI_BASE_PATH:-/}
       VIRTUAL_PORT: 8000
       LETSENCRYPT_HOST: ${NB_FAPI_DOMAIN:-${NB_DEPLOY_DOMAIN}}
+    networks:
+      - proxy-net
 
   query:
     extends:
@@ -61,6 +68,8 @@ services:
       VIRTUAL_PORT: 5173
       # Set the below to the same domain as VIRTUAL_HOST to enable HTTPS
       LETSENCRYPT_HOST: ${NB_QUERY_DOMAIN:-${NB_DEPLOY_DOMAIN}}
+    networks:
+      - proxy-net
 
 secrets:
   db_admin_password:
