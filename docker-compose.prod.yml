@@ -48,7 +48,7 @@ services:
       file: docker-compose.yml
       service: query
     profiles:
-      - "node"
+      - "portal"
     # For a production deployment, we want to avoid binding ports to the host to avoid conflicts with
     # already running services. So here we override the ports exposed in the recipe we expand from and
     # set the ports to an empty list

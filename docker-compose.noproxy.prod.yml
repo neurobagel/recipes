@@ -32,7 +32,7 @@ services:
       file: docker-compose.yml
       service: query
     profiles:
-      - "node"
+      - "portal"
     environment:
       NB_API_QUERY_URL: https://${NB_FAPI_DOMAIN:-${NB_DEPLOY_DOMAIN}}${NB_FAPI_BASE_PATH}
 
