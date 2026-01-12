@@ -306,3 +306,7 @@ dist
 
 # SvelteKit build / generate output
 .svelte-kit
+
+# Data directory - ignore all files except the example
+data/*
+!data/example_synthetic_pheno-bids-derivatives.jsonld
