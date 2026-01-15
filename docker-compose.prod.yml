@@ -1,5 +1,16 @@
 services:
 
+  init_data:
+    extends:
+      file: docker-compose.yml
+      service: init_data
+
+  graph:
+    extends:
+      file: docker-compose.yml
+      service: graph
+    ports: !override []
+
   api:
     extends:
       file: docker-compose.yml
@@ -79,6 +90,7 @@ secrets:
 
 volumes:
   graphdb_home:
+  neurobagel_data:
 
 networks:
   proxy-net:

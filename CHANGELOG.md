@@ -1,3 +1,32 @@
+# v0.8.1 (Thu Jan 15 2026)
+
+#### 🚀 Enhancements
+
+- [ENH] Update example JSONLD to include richer dataset metadata [#169](https://github.com/neurobagel/recipes/pull/169) ([@alyssadai](https://github.com/alyssadai) [@rmanaem](https://github.com/rmanaem))
+
+#### Authors: 2
+
+- Alyssa Dai ([@alyssadai](https://github.com/alyssadai))
+- Arman Jahanpour ([@rmanaem](https://github.com/rmanaem))
+
+---
+
+# v0.8.0 (Thu Jan 15 2026)
+
+#### 🚀 Enhancements
+
+- [ENH] Add service to validate and extract dataset info from JSONLDs [#164](https://github.com/neurobagel/recipes/pull/164) ([@alyssadai](https://github.com/alyssadai))
+
+####  🧪 Tests
+
+- [FIX] Update imaging modality names in e2e test assertions [#166](https://github.com/neurobagel/recipes/pull/166) ([@alyssadai](https://github.com/alyssadai))
+
+#### Authors: 1
+
+- Alyssa Dai ([@alyssadai](https://github.com/alyssadai))
+
+---
+
 # v0.7.0 (Thu Nov 27 2025)
 
 #### 🚀 Enhancements
