@@ -1,5 +1,10 @@
 services:
 
+  init_data:
+    extends:
+      file: docker-compose.yml
+      service: init_data
+
   api:
     extends:
       file: docker-compose.yml

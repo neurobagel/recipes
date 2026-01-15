@@ -1,9 +1,6 @@
 services:
 
   init_data:
-    profiles:
-      - "local_node"
-      - "full_stack"
     build:
       context: ./init_data
     volumes:
