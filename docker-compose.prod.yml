@@ -4,6 +4,8 @@ services:
     extends:
       file: docker-compose.yml
       service: init_data
+    profiles:
+      - "node"
 
   api:
     extends:
