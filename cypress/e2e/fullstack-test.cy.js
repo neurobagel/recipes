@@ -92,7 +92,7 @@ describe('When I run an unfiltered query on all nodes', () => {
         cy.get('[data-cy="result-container"]').within(() => {
             cy.get('[data-cy^="card-"]').contains("BIDS synthetic").closest('[data-cy^="card-"]').as("bidsSyntheticCard");
             cy.get("@bidsSyntheticCard").within(() => {
-                const substrings = ["5 subjects match", "5 total subjects", "BOLD", "T1W"]
+                const substrings = ["5 / 5", "matching subjects", "BOLD", "T1W"]
                 substrings.forEach(substring => (
                     cy.contains(substring, {matchCase: false})
                 ))
@@ -101,13 +101,24 @@ describe('When I run an unfiltered query on all nodes', () => {
             cy.contains("Classification learning", {matchCase: false});
         });
         cy.get("@bidsSyntheticCard").within(() => {
-            cy.contains("button", "Available pipelines").trigger("mouseover");
+            cy.contains("button", "fmriprep").trigger("mouseover");
         });
         // This must be outside of the dataset card selector because the tooltip exceeds the card boundaries (?)
         cy.get('.MuiTooltip-tooltip')
             .within(() => {
-                ["fmriprep 23.1.3", "freesurfer 7.3.2"].forEach(pipeline => (
-                    cy.contains(pipeline, {matchCase: false})
+                ["23.1.3"].forEach(version => (
+                    cy.contains(version, {matchCase: false})
+                )
+            )});
+
+        cy.get("@bidsSyntheticCard").within(() => {
+            cy.contains("button", "freesurfer").trigger("mouseover");
+        });
+        // This must be outside of the dataset card selector because the tooltip exceeds the card boundaries (?)
+        cy.get('.MuiTooltip-tooltip')
+            .within(() => {
+                ["7.3.2"].forEach(version => (
+                    cy.contains(version, {matchCase: false})
                 )
             )});
     });
@@ -157,7 +168,7 @@ describe('When I run a filtered query on all nodes', () => {
         cy.get('[data-cy="summary-stats"]').contains("1 datasets");
         cy.get('[data-cy="result-container"]')
             .within(() => {
-                ["BIDS synthetic", "1 subjects match"].forEach(substring => (
+                ["BIDS synthetic", "1 / 5",].forEach(substring => (
                     cy.contains(substring, {matchCase: false})
                 )
             )});
