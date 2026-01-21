@@ -9,7 +9,7 @@ services:
     command: >
       sh -euxc "rm -rf /data/* && python -m init_data.process_jsonld /input_data /data"
 
-  n_api:
+  api:
     image: "neurobagel/api:${NB_NAPI_TAG:-latest}"
     depends_on:
       init_data:
@@ -65,7 +65,7 @@ services:
       - db_admin_password
       - db_user_password
 
-  f_api:
+  federation:
     image: "neurobagel/federation_api:${NB_FAPI_TAG:-latest}"
     ports:
       - "${NB_FAPI_PORT_HOST:-8080}:8000"
@@ -78,7 +78,7 @@ services:
       NB_ENABLE_AUTH: ${NB_ENABLE_AUTH:-false}
       NB_QUERY_CLIENT_ID: ${NB_QUERY_CLIENT_ID}
 
-  query:
+  query_federation:
     image: "neurobagel/query_tool:${NB_QUERY_TAG:-latest}"
     ports:
       - "${NB_QUERY_PORT_HOST:-3000}:5173"

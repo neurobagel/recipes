@@ -10,7 +10,7 @@ services:
   api:
     extends:
       file: docker-compose.yml
-      service: n_api
+      service: api
     profiles:
       - "node"
     # For a production deployment, we want to avoid binding ports to the host to avoid conflicts with
@@ -39,10 +39,10 @@ services:
     networks:
       - default
 
-  f_api:
+  federation:
     extends:
       file: docker-compose.yml
-      service: f_api
+      service: federation
     profiles:
       - "portal"
     # For a production deployment, we want to avoid binding ports to the host to avoid conflicts with
@@ -57,10 +57,10 @@ services:
     networks:
       - proxy-net
 
-  query:
+  query_federation:
     extends:
       file: docker-compose.yml
-      service: query
+      service: query_federation
     profiles:
       - "portal"
     # For a production deployment, we want to avoid binding ports to the host to avoid conflicts with
