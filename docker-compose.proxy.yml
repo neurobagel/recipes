@@ -31,4 +31,4 @@ volumes:
 
 networks:
   proxy-net:
-    name: ${PROXY_NETWORK_NAME:-NB_proxynet}
+    name: NB_proxynet

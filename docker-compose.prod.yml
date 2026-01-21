@@ -91,4 +91,4 @@ volumes:
 networks:
   proxy-net:
     external: true
-    name: ${PROXY_NETWORK_NAME:-NB_proxynet}
+    name: NB_proxynet
