@@ -10,7 +10,7 @@ services:
   api:
     extends:
       file: docker-compose.yml
-      service: n_api
+      service: api
     profiles:
       - "node"
 
@@ -27,17 +27,17 @@ services:
     # and set it to an empty list
     ports: !override []
 
-  f_api:
+  federation:
     extends:
       file: docker-compose.yml
-      service: f_api
+      service: federation
     profiles:
       - "portal"
 
-  query:
+  query_federation:
     extends:
       file: docker-compose.yml
-      service: query
+      service: query_federation
     profiles:
       - "portal"
     environment:

@@ -21,7 +21,7 @@ services:
       VIRTUAL_HOST: ${NB_NAPI_DOMAIN:-${NB_DEPLOY_DOMAIN}}
       VIRTUAL_PATH: ${NB_NAPI_BASE_PATH:-/}
       VIRTUAL_PORT: 8000
-      LETSENCRYPT_HOST: ${NB_NAPI_DOMAIN:-${NB_DEPLOY_DOMAIN}}
+      LETSENCRYPT_HOST: ${NB_NAPI_DOMAIN}
     networks:
       - proxy-net
       - default
