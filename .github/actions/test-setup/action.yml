@@ -36,11 +36,16 @@ runs:
         sed -i 's|^#\?[[:space:]]\?COMPOSE_PROJECT_NAME=.*|COMPOSE_PROJECT_NAME=portal|' .env
         sed -i 's|^#\?[[:space:]]\?COMPOSE_PROFILES=.*|COMPOSE_PROFILES=portal|' .env
 
+        # Change the NB_API_QUERY_URL in the compose file because we no longer make this configurable
+        # TODO: revisit this
+        # The spaces here are important because yaml cares about them. If this breaks, check the spaces
+        sed -i 's|^[[:space:]]*NB_API_QUERY_URL:.*|      NB_API_QUERY_URL: http://localhost:8080|' docker-compose.noproxy.prod.yml
+
         # Define local nodes to federate over
         echo '[{"NodeName": "2 OpenNeuro Datasets", "ApiURL": "http://protected_node-api-1:8000"},{"NodeName": "BIDS Synthetic", "ApiURL": "http://open_node-api-1:8000"}]' > local_nb_nodes.json
       shell: bash
 
-    - name: Launch Protected node
+    - name: Launch Portal
       working-directory: portal/recipes
       run: |
         # We're using the noproxy deployment here because we need the ports accessible on the host
@@ -143,8 +148,7 @@ runs:
         for container in \
             protected_node-graph-1 \
             protected_node-api-1 \
-            protected_node-federation-1 \
-            protected_node-query_federation-1 \
+            portal-federation-1 \
             open_node-graph-1 \
             open_node-api-1; do
             if [ -z "$(docker ps --filter "name=$container" --format '{{.Names}}')" ]; then
