@@ -50,10 +50,10 @@ services:
     # set the ports to an empty list
     ports: !override []
     environment:
-      VIRTUAL_HOST: ${NB_FAPI_DOMAIN:-${NB_DEPLOY_DOMAIN}}
+      VIRTUAL_HOST: ${NB_FAPI_DOMAIN}
       VIRTUAL_PATH: ${NB_FAPI_BASE_PATH:-/}
       VIRTUAL_PORT: 8000
-      LETSENCRYPT_HOST: ${NB_FAPI_DOMAIN:-${NB_DEPLOY_DOMAIN}}
+      LETSENCRYPT_HOST: ${NB_FAPI_DOMAIN}
     networks:
       - proxy-net
 
@@ -68,13 +68,11 @@ services:
     # set the ports to an empty list
     ports: !override []
     environment:
-      NB_API_QUERY_URL: https://${NB_FAPI_DOMAIN:-${NB_DEPLOY_DOMAIN}}${NB_FAPI_BASE_PATH}
-      # Replace the below domain with the domain you want to serve the query tool from
-      VIRTUAL_HOST: ${NB_QUERY_DOMAIN:-${NB_DEPLOY_DOMAIN}}
+      NB_API_QUERY_URL: https://${NB_FAPI_DOMAIN}${NB_FAPI_BASE_PATH}
+      VIRTUAL_HOST: ${NB_QUERY_DOMAIN}
       VIRTUAL_PATH: ${NB_QUERY_APP_BASE_PATH:-/}
       VIRTUAL_PORT: 5173
-      # Set the below to the same domain as VIRTUAL_HOST to enable HTTPS
-      LETSENCRYPT_HOST: ${NB_QUERY_DOMAIN:-${NB_DEPLOY_DOMAIN}}
+      LETSENCRYPT_HOST: ${NB_QUERY_DOMAIN}
     networks:
       - proxy-net
 
