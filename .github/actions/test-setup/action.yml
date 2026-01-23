@@ -114,7 +114,7 @@ runs:
     - name: Launch Open node
       working-directory: open_node/recipes
       run: |
-        docker compose --profile local_node up -d
+        docker compose -f docker-compose.noproxy up-d
       shell: bash
 
     - name: Wait for graph setup completion for both nodes
