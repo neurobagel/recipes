@@ -51,3 +51,4 @@ secrets:
 
 volumes:
   graphdb_home:
+  neurobagel_data:
