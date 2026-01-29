@@ -1,9 +1,6 @@
 services:
 
   init_data:
-    profiles:
-      - "local_node"
-      - "full_stack"
     build:
       context: ./init_data
     volumes:
@@ -14,9 +11,6 @@ services:
 
   api:
     image: "neurobagel/api:${NB_NAPI_TAG:-latest}"
-    profiles:
-      - "local_node"
-      - "full_stack"
     depends_on:
       init_data:
         condition: service_completed_successfully
@@ -73,9 +67,6 @@ services:
 
   federation:
     image: "neurobagel/federation_api:${NB_FAPI_TAG:-latest}"
-    profiles:
-      - "local_federation"
-      - "full_stack"
     ports:
       - "${NB_FAPI_PORT_HOST:-8080}:8000"
     volumes:
@@ -89,13 +80,10 @@ services:
 
   query_federation:
     image: "neurobagel/query_tool:${NB_QUERY_TAG:-latest}"
-    profiles:
-      - "local_federation"
-      - "full_stack"
     ports:
       - "${NB_QUERY_PORT_HOST:-3000}:5173"
     environment:
-      NB_API_QUERY_URL: ${NB_API_QUERY_URL}
+      NB_API_QUERY_URL: ${NB_API_QUERY_URL:-http://localhost:8000}
       NB_QUERY_APP_BASE_PATH: ${NB_QUERY_APP_BASE_PATH:-/}
       NB_ENABLE_AUTH: ${NB_ENABLE_AUTH:-false}
       NB_QUERY_CLIENT_ID: ${NB_QUERY_CLIENT_ID}
