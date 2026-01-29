@@ -1,3 +1,16 @@
+# v0.8.1 (Thu Jan 15 2026)
+
+#### 🚀 Enhancements
+
+- [ENH] Update example JSONLD to include richer dataset metadata [#169](https://github.com/neurobagel/recipes/pull/169) ([@alyssadai](https://github.com/alyssadai) [@rmanaem](https://github.com/rmanaem))
+
+#### Authors: 2
+
+- Alyssa Dai ([@alyssadai](https://github.com/alyssadai))
+- Arman Jahanpour ([@rmanaem](https://github.com/rmanaem))
+
+---
+
 # v0.8.0 (Thu Jan 15 2026)
 
 #### 🚀 Enhancements
