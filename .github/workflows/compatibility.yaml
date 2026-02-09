@@ -52,7 +52,7 @@ jobs:
           echo "Finished setting up the Neurobagel graph backend."
 
       - name: Run end to end tests
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           wait-on: http://localhost:3000
           component: false
@@ -114,7 +114,7 @@ jobs:
           echo "Finished setting up the Neurobagel graph backend."
 
       - name: Run end to end tests
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           wait-on: http://localhost:3000
           component: false
