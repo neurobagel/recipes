@@ -1,5 +1,5 @@
 # This is a local composite action (reusable) that sets up two local Neurobagel nodes for testing.
-# This includes a full_stack deployment with a protected node, and a local_node deployment with an open node
+# This includes a full_stack deployment with a protected node, and a node deployment with an open node
 # that is added to the federation list of the full_stack node.
 # 
 # It can be run as a single step inside workflow jobs, meaning that its environment can persist across steps and be reused across workflows.
@@ -53,7 +53,7 @@ runs:
         docker compose -f docker-compose.noproxy.prod.yml up -d
       shell: bash
     
-    - name: Checkout recipes for Protected node (full_stack node)
+    - name: Checkout recipes for Protected node (node mode)
       uses: actions/checkout@v4
       with:
         path: protected_node/recipes
@@ -100,7 +100,7 @@ runs:
         docker compose -f docker-compose.noproxy.prod.yml up -d
       shell: bash
 
-    - name: Checkout recipes for Open node (local_node)
+    - name: Checkout recipes for Open node (node mode)
       uses: actions/checkout@v4
       with:
         path: open_node/recipes
@@ -149,6 +149,7 @@ runs:
             protected_node-graph-1 \
             protected_node-api-1 \
             portal-federation-1 \
+            portal-query_federation-1 \
             open_node-graph-1 \
             open_node-api-1; do
             if [ -z "$(docker ps --filter "name=$container" --format '{{.Names}}')" ]; then
