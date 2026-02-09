@@ -27,7 +27,7 @@ jobs:
       - name: Run docker compose
         working-directory: .
         run: |
-          docker compose --profile full_stack up -d
+          docker compose up -d
 
       - name: Set up node env
         uses: actions/setup-node@v6
@@ -65,7 +65,7 @@ jobs:
       - name: Clean up again
         working-directory: .
         run: |
-          docker compose --profile full_stack down
+          docker compose down
 
   nightly:
     runs-on: ubuntu-latest
@@ -89,7 +89,7 @@ jobs:
       - name: Run docker compose
         working-directory: .
         run: |
-          docker compose --profile full_stack up -d
+          docker compose up -d
 
       - name: Set up node env
         uses: actions/setup-node@v6
@@ -127,4 +127,4 @@ jobs:
       - name: Clean up
         working-directory: .
         run: |
-          docker compose --profile full_stack down
+          docker compose down
