@@ -21,10 +21,9 @@ For detailed instructions on deploying Neurobagel for your use case, see the off
     ```
 
 2. Copy and rename the required template configuration files
+
     ```bash
     cp template.env .env
-
-    # if also setting up local federation
     cp local_nb_nodes.template.json local_nb_nodes.json
     ```
 
@@ -33,7 +32,7 @@ For detailed instructions on deploying Neurobagel for your use case, see the off
 
 See comments in the `.env` file for more information.
 
-1. In the repository root, start the default Docker Compose recipe
+3. In the repository root, start the default Docker Compose recipe
 
     ```bash
     docker compose up -d
