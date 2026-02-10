@@ -1,0 +1,54 @@
+services:
+
+  init_data:
+    extends:
+      file: docker-compose.yml
+      service: init_data
+    profiles:
+      - "node"
+
+  api:
+    extends:
+      file: docker-compose.yml
+      service: api
+    profiles:
+      - "node"
+
+  graph:
+    extends:
+      file: docker-compose.yml
+      service: graph
+    profiles:
+      - "node"
+    # For a production deployment, we want to avoid unnecessarily binding ports
+    # to the host to avoid conflicts with already running services.
+    # The graph should not be reachable by any service except the node API.
+    # So here we override the port exposed in the default recipe we expand from
+    # and set it to an empty list
+    ports: !override []
+
+  federation:
+    extends:
+      file: docker-compose.yml
+      service: federation
+    profiles:
+      - "portal"
+
+  query_federation:
+    extends:
+      file: docker-compose.yml
+      service: query_federation
+    profiles:
+      - "portal"
+    environment:
+      NB_API_QUERY_URL: https://${NB_FAPI_DOMAIN}${NB_FAPI_BASE_PATH}
+
+secrets:
+  db_admin_password:
+    file: ${NB_GRAPH_SECRETS_PATH:-./secrets}/NB_GRAPH_ADMIN_PASSWORD.txt
+  db_user_password:
+    file: ${NB_GRAPH_SECRETS_PATH:-./secrets}/NB_GRAPH_PASSWORD.txt
+
+volumes:
+  graphdb_home:
+  neurobagel_data:
