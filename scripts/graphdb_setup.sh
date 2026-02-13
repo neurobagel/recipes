@@ -138,7 +138,7 @@ echo "The GraphDB server is being accessed at http://localhost:${NB_GRAPH_PORT}.
 
 # Install jq to construct JSON payloads for curl requests while preserving special characters
 echo "Installing jq..."
-apk add --no-cache jq
+apt-get install -y jq
 
 ##### First time GraphDB setup #####
 
