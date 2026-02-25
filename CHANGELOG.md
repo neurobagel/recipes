@@ -1,3 +1,20 @@
+# v0.8.2 (Fri Feb 13 2026)
+
+#### 🚀 Enhancements
+
+- [ENH] Split proxy from deployment recipes [#162](https://github.com/neurobagel/recipes/pull/162) ([@surchs](https://github.com/surchs))
+
+#### 🐛 Bug Fixes
+
+- [FIX] Upgrade GraphDB image to 10.8.12 [#178](https://github.com/neurobagel/recipes/pull/178) ([@alyssadai](https://github.com/alyssadai))
+
+#### Authors: 2
+
+- Alyssa Dai ([@alyssadai](https://github.com/alyssadai))
+- Sebastian Urchs ([@surchs](https://github.com/surchs))
+
+---
+
 # v0.8.1 (Thu Jan 15 2026)
 
 #### 🚀 Enhancements
