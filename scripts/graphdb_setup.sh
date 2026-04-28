@@ -137,8 +137,9 @@ SCRIPT_DIR=$(dirname "$0")
 echo "The GraphDB server is being accessed at http://localhost:${NB_GRAPH_PORT}."
 
 # Install jq to construct JSON payloads for curl requests while preserving special characters
+apt-get update -qq
 echo "Installing jq..."
-apt-get install -y -q jq
+apt-get install -y -qq jq
 
 ##### First time GraphDB setup #####
 
