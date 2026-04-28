@@ -1,3 +1,15 @@
+# v0.8.3 (Tue Apr 28 2026)
+
+#### 🐛 Bug Fixes
+
+- [FIX] refresh old package index before jq install [#194](https://github.com/neurobagel/recipes/pull/194) ([@surchs](https://github.com/surchs))
+
+#### Authors: 1
+
+- Sebastian Urchs ([@surchs](https://github.com/surchs))
+
+---
+
 # v0.8.2 (Fri Feb 13 2026)
 
 #### 🚀 Enhancements
