@@ -1,3 +1,4 @@
+import os
 import json
 from pathlib import Path
 import logging
@@ -5,6 +6,11 @@ import argparse
 import shutil
 from pydantic import ValidationError, TypeAdapter, HttpUrl
 from init_data.utils import models
+from collections import defaultdict
+
+NB_CATALOG_MODE = os.environ.get("NB_CATALOG_MODE", "false").lower() == "true"
+DATA_DICTIONARY_SUFFIX = "_annotated.json"
+DATASET_DESCRIPTION_SUFFIX = "_dataset_description.json"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -27,9 +33,24 @@ jsonld_key_to_dataset_attribute_mapping = {
     "hasPortalURI": "access_link",  # Map legacy hasPortalURI to access_link
 }
 
+json_key_to_dataset_attribute_mapping = {
+    "Name": "dataset_name",  # required
+    "Authors": "authors",
+    "ParticipantCount": "participant_count",  # required
+    "ReferencesAndLinks": "references_and_links",
+    "Keywords": "keywords",
+    "RepositoryURL": "repository_url",
+    "AccessInstructions": "access_instructions",
+    "AccessType": "access_type",
+    "AccessEmail": "access_email",
+    "AccessLink": "access_link",
+}
 
-def load_jsonld(path: Path) -> dict:
-    """Load a JSONLD file and return its content as a dictionary."""
+# participant_count
+# range: minimum, maximum
+
+def load_json(path: Path) -> dict:
+    """Load a JSON file and return its content as a dictionary."""
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
@@ -38,7 +59,7 @@ def load_and_validate_jsonld_dataset(file_path: Path) -> dict | None:
     """
     Strip the @context from the contents of a JSONLD file and validate it against the Neurobagel Dataset model.
     """
-    jsonld = load_jsonld(file_path)
+    jsonld = load_json(file_path)
     jsonld.pop("@context")
     try:
         models.Dataset.model_validate(jsonld)
@@ -68,7 +89,7 @@ def get_homepage_url(references_and_links: list[str]) -> str | None:
         None
     )
 
-
+# TODO: Rename jsonld_dir to data_dir to account for fact that it'll have JSONs as well
 def extract_datasets_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dict:
     """
     Validate and extract dataset-level metadata from all Neurobagel dataset JSONLD files in a directory.
@@ -79,30 +100,62 @@ def extract_datasets_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dic
     datasets_metadata_lookup = {}
     excluded_jsonlds = []
 
-    num_input_jsonlds = len(list(jsonld_dir.glob("*.jsonld")))
-    for idx, jsonld_path in enumerate(jsonld_dir.glob("*.jsonld"), start=1):
-        filename = jsonld_path.name
-        logger.info(f"({idx}/{num_input_jsonlds}) Processing file: {filename}")
-        dataset = load_and_validate_jsonld_dataset(jsonld_path)
-        if dataset is None:
-            excluded_jsonlds.append(filename)
-            continue
+    if NB_CATALOG_MODE:
+        dataset_file_groups = defaultdict(dict)
+        for json_file in jsonld_dir.glob("*.json"):
+            if json_file.name.endswith(DATA_DICTIONARY_SUFFIX):
+                dataset_id = json_file.name.removesuffix(DATA_DICTIONARY_SUFFIX)
+                dataset_file_groups[dataset_id]["dictionary"] = json_file
+            elif json_file.name.endswith(DATASET_DESCRIPTION_SUFFIX):
+                dataset_id = json_file.name.removesuffix(DATASET_DESCRIPTION_SUFFIX)
+                dataset_file_groups[dataset_id]["description"] = json_file
+        
+        dataset_file_pairs = {}
+        for dataset_file_id, dataset_files in dataset_file_groups.items():
+            if "dictionary" not in dataset_files or "description" not in dataset_files:
+                file = dataset_files.get("dictionary") or dataset_files.get("description")
+                if "dictionary" not in dataset_files:
+                    missing_file = f"{dataset_file_id}{DATA_DICTIONARY_SUFFIX}"
+                else:
+                    missing_file = f"{dataset_file_id}{DATASET_DESCRIPTION_SUFFIX}"
+                logger.warning(
+                    f"{file}' is missing a corresponding {missing_file}. Skipping dataset."
+                )
+                continue
 
-        dataset_uuid = dataset["identifier"]
-        dataset_attributes = {}
-        for jsonld_key, attribute_name in jsonld_key_to_dataset_attribute_mapping.items():
-            if jsonld_key in dataset:
-                if jsonld_key == "hasReferencesAndLinks":
-                    if homepage_url := get_homepage_url(dataset[jsonld_key]):
-                        dataset_attributes["homepage"] = homepage_url
-                elif jsonld_key == "hasPortalURI":
-                    logger.warning(
-                        f"{filename} uses a deprecated dataset-level 'hasPortalURI' key. "
-                        "This URL will be stored as the access link for the dataset instead. "
-                        "We recommend updating your JSONLD using the latest version of the Neurobagel CLI."
-                    )
-                dataset_attributes[attribute_name] = dataset[jsonld_key]
-        datasets_metadata_lookup[dataset_uuid] = dataset_attributes
+            data_dict = load_json(dataset_files["dictionary"])
+            dataset_description = load_json(dataset_files["description"])
+            # TODO: Generate a UUID programmatically
+
+            for dataset_description_key in json_key_to_dataset_attribute_mapping:
+                if dataset_description_key in dataset_description:
+                    pass
+
+    else:
+        num_input_jsonlds = len(list(jsonld_dir.glob("*.jsonld")))
+        for idx, jsonld_path in enumerate(jsonld_dir.glob("*.jsonld"), start=1):
+            filename = jsonld_path.name
+            logger.info(f"({idx}/{num_input_jsonlds}) Processing file: {filename}")
+            jsonld_dataset = load_and_validate_jsonld_dataset(jsonld_path)
+            if jsonld_dataset is None:
+                excluded_jsonlds.append(filename)
+                continue
+
+            dataset_uuid = jsonld_dataset["identifier"]
+            dataset_attributes = {}
+            for jsonld_key, attribute_name in jsonld_key_to_dataset_attribute_mapping.items():
+                if jsonld_key in jsonld_dataset:
+                    if jsonld_key == "hasReferencesAndLinks":
+                        if homepage_url := get_homepage_url(jsonld_dataset[jsonld_key]):
+                            dataset_attributes["homepage"] = homepage_url
+                    elif jsonld_key == "hasPortalURI":
+                        logger.warning(
+                            f"{filename} uses a deprecated dataset-level 'hasPortalURI' key. "
+                            "This URL will be stored as the access link for the dataset instead. "
+                            "We recommend updating your JSONLD using the latest version of the Neurobagel CLI."
+                        )
+                    dataset_attributes[attribute_name] = jsonld_dataset[jsonld_key]
+            datasets_metadata_lookup[dataset_uuid] = dataset_attributes
 
         shutil.copy2(jsonld_path, output_dir)
 
