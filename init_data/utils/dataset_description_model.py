@@ -1,3 +1,7 @@
+# This file is adapted from https://github.com/neurobagel/bagel-cli/blob/main/bagel/dataset_description_model.py
+# but is modified to include a required "participant_count" field,
+# which is only used for the Neurobagel catalog node mode.
+
 from enum import Enum
 from typing import Annotated, Any
 
@@ -48,6 +52,14 @@ class DatasetDescription(BaseModel):
             default_factory=list,
             description="List of individuals who contributed to the creation/curation of the dataset. Key reused from BIDS dataset_description.json.",
             alias="Authors",
+        ),
+    ]
+    participant_count: Annotated[
+        int,
+        Field(
+            ...,
+            description="Number of participants in the dataset.",
+            alias="ParticipantCount",
         ),
     ]
     # NOTE: In the BIDS dataset_description.json, values for this field can be string references as well as URLs.
