@@ -5,7 +5,7 @@ import logging
 import argparse
 import shutil
 from pydantic import ValidationError, TypeAdapter, HttpUrl
-from init_data.utils import models
+from init_data.utils import models, dataset_description_model
 from collections import defaultdict
 
 NB_CATALOG_MODE = os.environ.get("NB_CATALOG_MODE", "false").lower() == "true"
@@ -112,6 +112,7 @@ def extract_datasets_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dic
         
         dataset_file_pairs = {}
         for dataset_file_id, dataset_files in dataset_file_groups.items():
+            # or, just check based on length
             if "dictionary" not in dataset_files or "description" not in dataset_files:
                 file = dataset_files.get("dictionary") or dataset_files.get("description")
                 if "dictionary" not in dataset_files:
@@ -124,12 +125,16 @@ def extract_datasets_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dic
                 continue
 
             data_dict = load_json(dataset_files["dictionary"])
-            dataset_description = load_json(dataset_files["description"])
+            dataset_desc = load_json(dataset_files["description"])
             # TODO: Generate a UUID programmatically
 
+            validated_dataset_desc = dataset_description_model.DatasetDescription.model_validate(dataset_desc)
+
             for dataset_description_key in json_key_to_dataset_attribute_mapping:
-                if dataset_description_key in dataset_description:
-                    pass
+                if dataset_description_key in validated_dataset_desc:
+                    if dataset_description_key == "ReferencesAndLinks":
+                        if homepage_url := get_homepage_url(validated_dataset_desc[dataset_description_key]):
+                            dataset_attributes["homepage"] = homepage_url
 
     else:
         num_input_jsonlds = len(list(jsonld_dir.glob("*.jsonld")))
