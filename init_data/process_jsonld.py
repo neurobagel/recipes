@@ -43,21 +43,6 @@ jsonld_key_to_dataset_attribute_mapping = {
     "hasPortalURI": "access_link",  # Map legacy hasPortalURI to access_link
 }
 
-json_key_to_dataset_attribute_mapping = {
-    "Name": "dataset_name",  # required
-    "Authors": "authors",
-    "ParticipantCount": "participant_count",  # required
-    "ReferencesAndLinks": "references_and_links",
-    "Keywords": "keywords",
-    "RepositoryURL": "repository_url",
-    "AccessInstructions": "access_instructions",
-    "AccessType": "access_type",
-    "AccessEmail": "access_email",
-    "AccessLink": "access_link",
-}
-
-# participant_count
-# range: minimum, maximum
 
 def load_json(path: Path) -> dict:
     """Load a JSON file and return its content as a dictionary."""
@@ -127,6 +112,9 @@ def get_is_part_of_assessment(column_annotations: dict) -> str:
 
 
 def transform_age(value: str, value_format: str) -> float | None:
+    """
+    Adapted from: https://github.com/neurobagel/bagel-cli/blob/053f9c87e1030392158d0975759c955c24199a3c/bagel/utilities/pheno_utils.py#L226-L259.
+    """
     try:
         if value_format in [
             AGE_FORMATS["float"],
@@ -161,7 +149,7 @@ def transform_age(value: str, value_format: str) -> float | None:
     return None
 
 
-def get_summary_pheno_attributes(data_dict: dict, dataset_name: str) -> dict | None:
+def get_summary_pheno_attributes_for_dataset(data_dict: dict, dataset_name: str) -> dict | None:
     summary_pheno_attributes = {}
 
     sex_column_annotations = get_column_annotations_about(data_dict, "nb:Sex")
@@ -191,9 +179,9 @@ def get_summary_pheno_attributes(data_dict: dict, dataset_name: str) -> dict | N
     summary_pheno_attributes = {
         variable: list(dict.fromkeys(terms)) for variable, terms in summary_pheno_attributes.items()
     }
-    
-    # TODO: Handle age
+
     age_column_annotations = get_column_annotations_about(data_dict, "nb:Age")
+    # Keep handling of >1 age columns consistent with the CLI
     if len(age_column_annotations) > 1:
         logger.warning(
             f"Dataset '{dataset_name}': The data dictionary indicates more than one column about age, "
@@ -210,12 +198,12 @@ def get_summary_pheno_attributes(data_dict: dict, dataset_name: str) -> dict | N
                 f"Dataset '{dataset_name}': Unable to transform the minimum and/or maximum age values to floats. "
             )
             return None
-
         summary_pheno_attributes["age_range"] = {
             "minimum": transformed_min,
             "maximum": transformed_max,
         }
     else:
+        # Or, should we just omit the key altogether?
         summary_pheno_attributes["age_range"] = None
 
     return summary_pheno_attributes
@@ -241,10 +229,9 @@ def extract_datasets_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dic
             elif json_file.name.endswith(DATASET_DESCRIPTION_SUFFIX):
                 dataset_id = json_file.name.removesuffix(DATASET_DESCRIPTION_SUFFIX)
                 dataset_file_groups[dataset_id]["description"] = json_file
-        
-        dataset_file_pairs = {}
+
         for dataset_file_id, dataset_files in dataset_file_groups.items():
-            # or, just check based on length
+            # TODO: Switch to checking just based on length?
             if "dictionary" not in dataset_files or "description" not in dataset_files:
                 file = dataset_files.get("dictionary") or dataset_files.get("description")
                 if "dictionary" not in dataset_files:
@@ -273,19 +260,21 @@ def extract_datasets_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dic
                 continue
 
             # dump back to dict
-            validated_dataset_desc = validated_dataset_desc.model_dump()
-            dataset_name = validated_dataset_desc["dataset_name"]
-
-            if homepage_url := get_homepage_url(validated_dataset_desc["references_and_links"]):
+            # TODO: Rename to 'validated_dataset_desc'?
+            dataset_attributes = validated_dataset_desc.model_dump()
+            if homepage_url := get_homepage_url(dataset_attributes["references_and_links"]):
                 dataset_attributes["homepage"] = homepage_url
-            
-            dataset_summary_pheno_attributes = get_summary_pheno_attributes(data_dict, dataset_name)
+
+            dataset_name = dataset_attributes["dataset_name"]
+            dataset_summary_pheno_attributes = get_summary_pheno_attributes_for_dataset(data_dict, dataset_name)
             if dataset_summary_pheno_attributes is None:
                 logger.error(
-                    f"Dataset '{dataset_name}': Unable to extract summary phenotypic attributes from the data dictionary. Skipping dataset."
+                    f"Dataset '{dataset_name}': "
+                    "Failed to extract summary phenotypic attributes from the data dictionary. "
+                    "Skipping dataset."
                 )
                 continue
-            dataset_attributes = {**validated_dataset_desc, **dataset_summary_pheno_attributes}
+            dataset_attributes = {**dataset_attributes, **dataset_summary_pheno_attributes}
 
     else:
         num_input_jsonlds = len(list(jsonld_dir.glob("*.jsonld")))
