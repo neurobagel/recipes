@@ -1,6 +1,7 @@
 # This file is adapted from https://github.com/neurobagel/bagel-cli/blob/main/bagel/dataset_description_model.py
 # but is modified to include a required "participant_count" field,
-# which is only used for the Neurobagel catalog node mode.
+# (which is only used for the Neurobagel catalog node mode)
+# and to rename the "name" field to "dataset_name" for the purposes of the internal datasets metadata file.
 
 from enum import Enum
 from typing import Annotated, Any
@@ -35,7 +36,7 @@ class AccessType(str, Enum):
 class DatasetDescription(BaseModel):
     """Schema for a Neurobagel dataset description JSON file."""
 
-    name: Annotated[
+    dataset_name: Annotated[
         str,
         Field(
             ...,
