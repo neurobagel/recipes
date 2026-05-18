@@ -87,6 +87,7 @@ def get_homepage_url(references_and_links: list[str]) -> str | None:
 
 
 def get_all_column_annotations(data_dict: dict) -> list[dict]:
+    """Return a list of all column Neurobagel annotations in the data dictionary."""
     return [
         column_content["Annotations"]
         for column_content in data_dict.values()
@@ -95,6 +96,7 @@ def get_all_column_annotations(data_dict: dict) -> list[dict]:
 
 
 def get_column_annotations_about(data_dict: dict, std_var: str) -> list[dict]:
+    """Return a list of Neurobagel annotations for all columns about a specific standardized variable."""
     return [
         column_annotations for column_annotations in get_all_column_annotations(data_dict)
         if column_annotations["IsAbout"]["TermURL"] == std_var
@@ -102,6 +104,7 @@ def get_column_annotations_about(data_dict: dict, std_var: str) -> list[dict]:
 
 
 def get_categorical_annotations_levels(column_annotations: dict) -> list[str]:
+    """Return a list of the standardized terms corresponding to the levels of a categorical variable."""
     levels_std_terms = []
     for level in column_annotations["Levels"].values():
         levels_std_terms.append(level["TermURL"])
@@ -110,6 +113,8 @@ def get_categorical_annotations_levels(column_annotations: dict) -> list[str]:
 
 def transform_age(value: str, value_format: str) -> float | None:
     """
+    Transform raw age value to a float based on the annotated format.
+
     Adapted from: https://github.com/neurobagel/bagel-cli/blob/053f9c87e1030392158d0975759c955c24199a3c/bagel/utilities/pheno_utils.py#L226-L259.
     """
     try:
@@ -173,6 +178,7 @@ def get_summary_pheno_attributes_for_dataset(data_dict: dict, dataset_name: str)
         available_assessments.append(assessment_column["IsPartOf"]["TermURL"])
     summary_pheno_attributes["available_assessments"] = available_assessments
 
+    # Ensure that lists of variable instances are unique
     summary_pheno_attributes = {
         variable: list(dict.fromkeys(terms)) for variable, terms in summary_pheno_attributes.items()
     }
