@@ -8,6 +8,7 @@ from pydantic import ValidationError, TypeAdapter, HttpUrl
 from init_data.utils import models, dataset_description_model
 from collections import defaultdict
 import isodate
+import uuid
 
 NB_CATALOG_MODE = os.environ.get("NB_CATALOG_MODE", "false").lower() == "true"
 DATA_DICTIONARY_SUFFIX = "_annotated.json"
@@ -107,10 +108,6 @@ def get_categorical_annotations_levels(column_annotations: dict) -> list[str]:
     return levels_std_terms
 
 
-def get_is_part_of_assessment(column_annotations: dict) -> str:
-    return column_annotations["IsPartOf"]["TermURL"]
-
-
 def transform_age(value: str, value_format: str) -> float | None:
     """
     Adapted from: https://github.com/neurobagel/bagel-cli/blob/053f9c87e1030392158d0975759c955c24199a3c/bagel/utilities/pheno_utils.py#L226-L259.
@@ -173,7 +170,7 @@ def get_summary_pheno_attributes_for_dataset(data_dict: dict, dataset_name: str)
 
     available_assessments = []
     for assessment_column in get_column_annotations_about(data_dict, "nb:Assessment"):
-        available_assessments.append(get_is_part_of_assessment(assessment_column))
+        available_assessments.append(assessment_column["IsPartOf"]["TermURL"])
     summary_pheno_attributes["available_assessments"] = available_assessments
 
     summary_pheno_attributes = {
@@ -260,12 +257,12 @@ def extract_datasets_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dic
                 continue
 
             # dump back to dict
-            # TODO: Rename to 'validated_dataset_desc'?
-            dataset_attributes = validated_dataset_desc.model_dump()
-            if homepage_url := get_homepage_url(dataset_attributes["references_and_links"]):
-                dataset_attributes["homepage"] = homepage_url
+            validated_dataset_desc = validated_dataset_desc.model_dump()
+            if homepage_url := get_homepage_url(validated_dataset_desc["references_and_links"]):
+                validated_dataset_desc["homepage"] = homepage_url
 
-            dataset_name = dataset_attributes["dataset_name"]
+            dataset_name = validated_dataset_desc["dataset_name"]
+            dataset_uuid = "nb:" + str(uuid.uuid4())
             dataset_summary_pheno_attributes = get_summary_pheno_attributes_for_dataset(data_dict, dataset_name)
             if dataset_summary_pheno_attributes is None:
                 logger.error(
@@ -274,8 +271,8 @@ def extract_datasets_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dic
                     "Skipping dataset."
                 )
                 continue
-            dataset_attributes = {**dataset_attributes, **dataset_summary_pheno_attributes}
-
+            dataset_attributes =  {**validated_dataset_desc, **dataset_summary_pheno_attributes}
+            datasets_metadata_lookup[dataset_uuid] = dataset_attributes
     else:
         num_input_jsonlds = len(list(jsonld_dir.glob("*.jsonld")))
         for idx, jsonld_path in enumerate(jsonld_dir.glob("*.jsonld"), start=1):
@@ -304,15 +301,15 @@ def extract_datasets_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dic
 
         shutil.copy2(jsonld_path, output_dir)
 
-    logger.info(
-        f"Dataset metadata successfully extracted from {len(datasets_metadata_lookup)}/{num_input_jsonlds} JSONLD file(s); "
-        "will upload the file(s) to the graph store."
-    )
-    if excluded_jsonlds:
-        logger.warning(
-            f"The following {len(excluded_jsonlds)} JSONLD file(s) failed validation and will not be uploaded:\n"
-            + '\n'.join(excluded_jsonlds)
+        logger.info(
+            f"Dataset metadata successfully extracted from {len(datasets_metadata_lookup)}/{num_input_jsonlds} JSONLD file(s); "
+            "will upload the file(s) to the graph store."
         )
+        if excluded_jsonlds:
+            logger.warning(
+                f"The following {len(excluded_jsonlds)} JSONLD file(s) failed validation and will not be uploaded:\n"
+                + '\n'.join(excluded_jsonlds)
+            )
     return datasets_metadata_lookup
 
 
