@@ -263,6 +263,11 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
             dataset_desc = load_json(dataset_files["description"])
             has_schema_errors = False
             try:
+                # NOTE: Here we only do a basic schema-based validation that ensures that
+                # column annotations are correctly structured in the data dictionary.
+                # We do not perform the additional custom multi-column validations done by the CLI
+                # (https://github.com/neurobagel/bagel-cli/blob/053f9c87e1030392158d0975759c955c24199a3c/bagel/utilities/pheno_utils.py#L482)
+                # such as checking that there is only 1 participant/session ID column annotated, etc.
                 dictionary_models.model_validate(data_dict)
             except ValidationError as err:
                 logger.error(
