@@ -130,7 +130,7 @@ class DatasetDescription(BaseModel):
     # (https://docs.pydantic.dev/latest/migration/#url-and-dsn-types-in-pydanticnetworks-no-longer-inherit-from-str)
     model_config = ConfigDict(extra="ignore", url_preserve_empty_path=True)
 
-    @field_validator("name")
+    @field_validator("dataset_name")
     @classmethod
     def check_name_not_whitespace(cls, value: str) -> str:
         """
