@@ -155,10 +155,9 @@ def transform_age(value: str, value_format: str) -> float | None:
         )
     except (ValueError, isodate.isoerror.ISO8601Error) as e:
         logger.error(
-            f"Error applying the format {value_format} to the age value: {value}. Error: {e}\n"
+            f"Error applying the format {value_format} to the age value: '{value}': {e}. "
             f"Check your data dictionary to ensure that the annotated age format matches the age values in your phenotypic table, "
-            "and that any missing values in your age column have been correctly annotated. "
-            "For examples of acceptable values for specific age formats, see https://neurobagel.org/data_models/dictionaries/#age.",
+            "and that any missing values in your age column have been correctly annotated.",
         )
     return None
 
@@ -215,6 +214,7 @@ def get_dataset_level_pheno_attributes(data_dict: dict, dataset_name: str) -> di
         if transformed_min is None or transformed_max is None:
             logger.error(
                 f"Dataset '{dataset_name}': Unable to transform the minimum and/or maximum age values to floats. "
+                "Skipping dataset."
             )
             return None
         summary_pheno_attributes["age_range"] = {
@@ -310,19 +310,15 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
                 continue
 
             # dump dataset description back to dict for easier modification
-            validated_dataset_desc = validated_dataset_desc.model_dump(mode="json")
-            if homepage_url := get_homepage_url(validated_dataset_desc["references_and_links"]):
-                validated_dataset_desc["homepage"] = homepage_url
+            validated_dataset_desc = validated_dataset_desc.model_dump(mode="json", exclude_defaults=True)
+            if "references_and_links" in validated_dataset_desc:
+                if homepage_url := get_homepage_url(validated_dataset_desc["references_and_links"]):
+                    validated_dataset_desc["homepage"] = homepage_url
 
             dataset_name = validated_dataset_desc["dataset_name"]
             dataset_summary_pheno_attributes = get_dataset_level_pheno_attributes(data_dict, dataset_name)
 
             if dataset_summary_pheno_attributes is None:
-                logger.error(
-                    f"Dataset '{dataset_name}': "
-                    "Failed to extract summary phenotypic attributes from the data dictionary. "
-                    "Skipping dataset."
-                )
                 excluded_jsons.extend([dataset_files["description"].name, dataset_files["dictionary"].name])
                 continue
 
