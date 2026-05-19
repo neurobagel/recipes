@@ -9,6 +9,7 @@ from init_data.utils import models, dictionary_models, dataset_description_model
 from collections import defaultdict
 import isodate
 import uuid
+import sys
 
 NB_CATALOG_MODE = os.environ.get("NB_CATALOG_MODE", "false").lower() == "true"
 DATA_DICTIONARY_SUFFIX = "_annotated.json"
@@ -43,6 +44,17 @@ jsonld_key_to_dataset_attribute_mapping = {
     "hasAccessLink": "access_link",
     "hasPortalURI": "access_link",  # Map legacy hasPortalURI to access_link
 }
+
+
+def list_files_with_extension(input_dir: Path, extension: str) -> list[Path]:
+    file_list = list(input_dir.glob(f"*{extension}"))
+    if not file_list:
+        logger.error(
+            f"No {extension} files found in the data directory. "
+            f"Ensure that your dataset {extension} files are located in the directory specified by LOCAL_GRAPH_DATA, "
+            "and that you have correctly set NB_CATALOG_MODE."
+        )
+    return file_list
 
 
 def load_json(path: Path) -> dict:
@@ -228,9 +240,14 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
     datasets_metadata_lookup = {}
 
     if NB_CATALOG_MODE:
+        logger.info("Initializing node data in catalog mode.")
+        input_jsons = list_files_with_extension(data_files_dir, ".json")
+        if not input_jsons:
+            sys.exit(1)
+
         dataset_json_file_groups = defaultdict(dict)
         excluded_jsons = []
-        for json_file in data_files_dir.glob("*.json"):
+        for json_file in input_jsons:
             if json_file.name.endswith(DATA_DICTIONARY_SUFFIX):
                 dataset_id = json_file.name.removesuffix(DATA_DICTIONARY_SUFFIX)
                 dataset_json_file_groups[dataset_id]["dictionary"] = json_file
@@ -322,9 +339,14 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
                 f"Skipped {len(excluded_jsons)} JSON files:\n" + "\n".join(excluded_jsons)
             )
     else:
-        num_input_jsonlds = len(list(data_files_dir.glob("*.jsonld")))
+        logger.info("Initializing node data in subject-level mode.")
+        input_jsonlds = list_files_with_extension(data_files_dir, ".jsonld")
+        num_input_jsonlds = len(input_jsonlds)
+        if not input_jsonlds:
+            sys.exit(1)
+
         excluded_jsonlds = []
-        for idx, jsonld_path in enumerate(data_files_dir.glob("*.jsonld"), start=1):
+        for idx, jsonld_path in enumerate(input_jsonlds, start=1):
             filename = jsonld_path.name
             logger.info(f"({idx}/{num_input_jsonlds}) Processing file: {filename}")
             jsonld_dataset = load_and_validate_jsonld_dataset(jsonld_path)
@@ -347,8 +369,7 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
                         )
                     dataset_attributes[attribute_name] = jsonld_dataset[jsonld_key]
             datasets_metadata_lookup[dataset_uuid] = dataset_attributes
-
-        shutil.copy2(jsonld_path, output_dir)
+            shutil.copy2(jsonld_path, output_dir)
 
         logger.info(
             f"Dataset metadata successfully extracted from {len(datasets_metadata_lookup)}/{num_input_jsonlds} JSONLD file(s); "
