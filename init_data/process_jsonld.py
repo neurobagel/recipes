@@ -256,7 +256,7 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
                 dataset_json_file_groups[dataset_id]["description"] = json_file
             else:
                 logger.warning(
-                    f"JSON file {json_file.name} does not have the expected suffix "
+                    f"{json_file.name} does not have the expected suffix "
                     f"for a data dictionary ({DATA_DICTIONARY_SUFFIX}) "
                     f"or a dataset description ({DATASET_DESCRIPTION_SUFFIX}). "
                     "Skipping file."
@@ -310,7 +310,7 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
                 continue
 
             # dump dataset description back to dict for easier modification
-            validated_dataset_desc = validated_dataset_desc.model_dump()
+            validated_dataset_desc = validated_dataset_desc.model_dump(mode="json")
             if homepage_url := get_homepage_url(validated_dataset_desc["references_and_links"]):
                 validated_dataset_desc["homepage"] = homepage_url
 
@@ -329,10 +329,10 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
             dataset_attributes =  {**validated_dataset_desc, **dataset_summary_pheno_attributes}
             dataset_uuid = "nb:" + str(uuid.uuid4())
             datasets_metadata_lookup[dataset_uuid] = dataset_attributes
-            logger.info(f"Successfully catalogued dataset: {dataset_name}")
+            logger.info(f"Successfully catalogued dataset: '{dataset_name}'")
 
         logger.info(
-            f"Dataset catalog metadata successfully extracted from {len(datasets_metadata_lookup)} datasets. "
+            f"Dataset catalog metadata successfully extracted from {len(datasets_metadata_lookup)} dataset(s). "
         )
         if excluded_jsons:
             logger.warning(
