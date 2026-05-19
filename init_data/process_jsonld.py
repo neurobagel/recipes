@@ -218,10 +218,12 @@ def get_dataset_level_pheno_attributes(data_dict: dict, dataset_name: str) -> di
 
 def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) -> dict:
     """
-    Validate and extract dataset-level metadata from all Neurobagel dataset JSONLD files in a directory.
-    
-    Validated JSONLD files are copied to the output directory,
-    and a dictionary mapping dataset UUIDs to their metadata is returned.
+    Validate and extract dataset-level metadata from all Neurobagel dataset files in a directory, either:
+    - dataset JSONLD files in subject-level mode, or
+    - pairs of dataset description and data dictionary JSON files in catalog mode
+
+    In subject-level node mode, validated JSONLD files are copied to the output directory.
+    A dictionary mapping dataset UUIDs to their metadata is returned.
     """    
     datasets_metadata_lookup = {}
     excluded_jsonlds = []
