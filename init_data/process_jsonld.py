@@ -226,11 +226,10 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
     A dictionary mapping dataset UUIDs to their metadata is returned.
     """    
     datasets_metadata_lookup = {}
-    excluded_jsonlds = []
 
     if NB_CATALOG_MODE:
         dataset_json_file_groups = defaultdict(dict)
-        skipped_json_files = []
+        excluded_jsons = []
         for json_file in data_files_dir.glob("*.json"):
             if json_file.name.endswith(DATA_DICTIONARY_SUFFIX):
                 dataset_id = json_file.name.removesuffix(DATA_DICTIONARY_SUFFIX)
@@ -245,7 +244,7 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
                     f"or a dataset description ({DATASET_DESCRIPTION_SUFFIX}). "
                     "Skipping file."
                 )
-                skipped_json_files.append(json_file.name)
+                excluded_jsons.append(json_file.name)
 
         for dataset_file_id, dataset_files in dataset_json_file_groups.items():
             if "dictionary" not in dataset_files or "description" not in dataset_files:
@@ -257,7 +256,7 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
                 logger.error(
                     f"{file.name} is missing a corresponding {missing_file}. Skipping dataset."
                 )
-                skipped_json_files.append(file.name)
+                excluded_jsons.append(file.name)
                 continue
 
             data_dict = load_json(dataset_files["dictionary"])
@@ -285,7 +284,7 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
                 has_schema_errors = True
 
             if has_schema_errors:
-                skipped_json_files.extend([dataset_files["description"].name, dataset_files["dictionary"].name])
+                excluded_jsons.extend([dataset_files["description"].name, dataset_files["dictionary"].name])
                 continue
 
             # dump dataset description back to dict for easier modification
@@ -302,19 +301,24 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
                     "Failed to extract summary phenotypic attributes from the data dictionary. "
                     "Skipping dataset."
                 )
-                skipped_json_files.extend([dataset_files["description"].name, dataset_files["dictionary"].name])
+                excluded_jsons.extend([dataset_files["description"].name, dataset_files["dictionary"].name])
                 continue
 
             dataset_attributes =  {**validated_dataset_desc, **dataset_summary_pheno_attributes}
             dataset_uuid = "nb:" + str(uuid.uuid4())
             datasets_metadata_lookup[dataset_uuid] = dataset_attributes
+            logger.info(f"Successfully catalogued dataset: {dataset_name}")
 
         logger.info(
-            f"Dataset metadata successfully parsed from {len(datasets_metadata_lookup)} datasets for catalog mode. "
-            f"Excluded {len(skipped_json_files)} JSON files:\n" + "\n".join(skipped_json_files)
+            f"Dataset catalog metadata successfully extracted from {len(datasets_metadata_lookup)} datasets. "
         )
+        if excluded_jsons:
+            logger.warning(
+                f"Skipped {len(excluded_jsons)} JSON files:\n" + "\n".join(excluded_jsons)
+            )
     else:
         num_input_jsonlds = len(list(data_files_dir.glob("*.jsonld")))
+        excluded_jsonlds = []
         for idx, jsonld_path in enumerate(data_files_dir.glob("*.jsonld"), start=1):
             filename = jsonld_path.name
             logger.info(f"({idx}/{num_input_jsonlds}) Processing file: {filename}")
@@ -350,6 +354,7 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
                 f"The following {len(excluded_jsonlds)} JSONLD file(s) failed validation and will not be uploaded:\n"
                 + '\n'.join(excluded_jsonlds)
             )
+
     return datasets_metadata_lookup
 
 
