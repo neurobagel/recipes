@@ -285,12 +285,12 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
                 # We do not perform the additional custom multi-column validations done by the CLI
                 # (https://github.com/neurobagel/bagel-cli/blob/053f9c87e1030392158d0975759c955c24199a3c/bagel/utilities/pheno_utils.py#L482)
                 # such as checking that there is only 1 participant/session ID column annotated, etc.
-                dictionary_models.model_validate(data_dict)
+                dictionary_models.DataDictionary.model_validate(data_dict)
             except ValidationError as err:
                 logger.error(
                     f"{dataset_files['dictionary'].name} is not a valid Neurobagel data dictionary.\n"
                     f"Validation errors:\n"
-                    f"{err}",
+                    f"{str(err)}"
                     "\nSkipping dataset."
                 )
                 has_schema_errors = True
@@ -300,7 +300,7 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
                 logger.error(
                     f"{dataset_files['description'].name} is not a valid Neurobagel dataset description.\n"
                     f"Validation errors:\n"
-                    f"{err}",
+                    f"{str(err)}"
                     "\nSkipping dataset."
                 )
                 has_schema_errors = True
