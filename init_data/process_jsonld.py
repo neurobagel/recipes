@@ -5,7 +5,7 @@ import logging
 import argparse
 import shutil
 from pydantic import ValidationError, TypeAdapter, HttpUrl
-from init_data.utils import models, dataset_description_model
+from init_data.utils import models, dictionary_models, dataset_description_model
 from collections import defaultdict
 import isodate
 import uuid
@@ -260,29 +260,42 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
                 skipped_json_files.append(file.name)
                 continue
 
-            # TODO: Validate the data dict
             data_dict = load_json(dataset_files["dictionary"])
             dataset_desc = load_json(dataset_files["description"])
+            has_schema_errors = False
+            try:
+                dictionary_models.model_validate(data_dict)
+            except ValidationError as err:
+                logger.error(
+                    f"{dataset_files['dictionary'].name} is not a valid Neurobagel data dictionary.\n"
+                    f"Validation errors:\n"
+                    f"{err}",
+                    "\nSkipping dataset."
+                )
+                has_schema_errors = True
             try:
                 validated_dataset_desc = dataset_description_model.DatasetDescription.model_validate(dataset_desc)
             except ValidationError as err:
                 logger.error(
-                    f"{dataset_files['description'].name} is not a valid Neurobagel dataset description. "
-                    "Skipping dataset."
-                    f"\nValidation details:\n"
+                    f"{dataset_files['description'].name} is not a valid Neurobagel dataset description.\n"
+                    f"Validation errors:\n"
                     f"{err}",
+                    "\nSkipping dataset."
                 )
+                has_schema_errors = True
+
+            if has_schema_errors:
                 skipped_json_files.extend([dataset_files["description"].name, dataset_files["dictionary"].name])
                 continue
 
-            # dump back to dict
+            # dump dataset description back to dict for easier modification
             validated_dataset_desc = validated_dataset_desc.model_dump()
             if homepage_url := get_homepage_url(validated_dataset_desc["references_and_links"]):
                 validated_dataset_desc["homepage"] = homepage_url
 
             dataset_name = validated_dataset_desc["dataset_name"]
-            dataset_uuid = "nb:" + str(uuid.uuid4())
             dataset_summary_pheno_attributes = get_dataset_level_pheno_attributes(data_dict, dataset_name)
+
             if dataset_summary_pheno_attributes is None:
                 logger.error(
                     f"Dataset '{dataset_name}': "
@@ -291,9 +304,11 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
                 )
                 skipped_json_files.extend([dataset_files["description"].name, dataset_files["dictionary"].name])
                 continue
+
             dataset_attributes =  {**validated_dataset_desc, **dataset_summary_pheno_attributes}
+            dataset_uuid = "nb:" + str(uuid.uuid4())
             datasets_metadata_lookup[dataset_uuid] = dataset_attributes
-        
+
         logger.info(
             f"Dataset metadata successfully parsed from {len(datasets_metadata_lookup)} datasets for catalog mode. "
             f"Excluded {len(skipped_json_files)} JSON files:\n" + "\n".join(skipped_json_files)
