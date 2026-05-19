@@ -1,4 +1,4 @@
-# This file is adapted from https://github.com/neurobagel/bagel-cli/blob/main/bagel/dataset_description_model.py
+# This file is adapted from https://github.com/neurobagel/bagel-cli/blob/053f9c87e1030392158d0975759c955c24199a3c/bagel/dataset_description_model.py
 # but is modified to include a required "participant_count" field,
 # (which is only used for the Neurobagel catalog node mode)
 # and to rename the "name" field to "dataset_name" for the purposes of the internal datasets metadata file.
