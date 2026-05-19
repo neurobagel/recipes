@@ -151,7 +151,11 @@ def transform_age(value: str, value_format: str) -> float | None:
     return None
 
 
-def get_summary_pheno_attributes_for_dataset(data_dict: dict, dataset_name: str) -> dict | None:
+def get_dataset_level_pheno_attributes(data_dict: dict, dataset_name: str) -> dict | None:
+    """
+    Extract dataset-level sex, diagnosis, assessment, and age range info from the data dictionary annotations
+    for catalog mode purposes.
+    """
     summary_pheno_attributes = {}
 
     sex_column_annotations = get_column_annotations_about(data_dict, "nb:Sex")
@@ -212,8 +216,7 @@ def get_summary_pheno_attributes_for_dataset(data_dict: dict, dataset_name: str)
     return summary_pheno_attributes
 
 
-# TODO: Rename jsonld_dir to data_dir to account for fact that it'll have JSONs as well
-def extract_datasets_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dict:
+def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) -> dict:
     """
     Validate and extract dataset-level metadata from all Neurobagel dataset JSONLD files in a directory.
     
@@ -224,17 +227,25 @@ def extract_datasets_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dic
     excluded_jsonlds = []
 
     if NB_CATALOG_MODE:
-        dataset_file_groups = defaultdict(dict)
-        for json_file in jsonld_dir.glob("*.json"):
+        dataset_json_file_groups = defaultdict(dict)
+        skipped_json_files = []
+        for json_file in data_files_dir.glob("*.json"):
             if json_file.name.endswith(DATA_DICTIONARY_SUFFIX):
                 dataset_id = json_file.name.removesuffix(DATA_DICTIONARY_SUFFIX)
-                dataset_file_groups[dataset_id]["dictionary"] = json_file
+                dataset_json_file_groups[dataset_id]["dictionary"] = json_file
             elif json_file.name.endswith(DATASET_DESCRIPTION_SUFFIX):
                 dataset_id = json_file.name.removesuffix(DATASET_DESCRIPTION_SUFFIX)
-                dataset_file_groups[dataset_id]["description"] = json_file
+                dataset_json_file_groups[dataset_id]["description"] = json_file
+            else:
+                logger.warning(
+                    f"JSON file {json_file.name} does not have the expected suffix "
+                    f"for a data dictionary ({DATA_DICTIONARY_SUFFIX}) "
+                    f"or a dataset description ({DATASET_DESCRIPTION_SUFFIX}). "
+                    "Skipping file."
+                )
+                skipped_json_files.append(json_file.name)
 
-        for dataset_file_id, dataset_files in dataset_file_groups.items():
-            # TODO: Switch to checking just based on length?
+        for dataset_file_id, dataset_files in dataset_json_file_groups.items():
             if "dictionary" not in dataset_files or "description" not in dataset_files:
                 file = dataset_files.get("dictionary") or dataset_files.get("description")
                 if "dictionary" not in dataset_files:
@@ -242,24 +253,24 @@ def extract_datasets_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dic
                 else:
                     missing_file = f"{dataset_file_id}{DATASET_DESCRIPTION_SUFFIX}"
                 logger.error(
-                    f"{file}' is missing a corresponding {missing_file}. Skipping dataset."
+                    f"{file.name} is missing a corresponding {missing_file}. Skipping dataset."
                 )
+                skipped_json_files.append(file.name)
                 continue
 
             # TODO: Validate the data dict
             data_dict = load_json(dataset_files["dictionary"])
             dataset_desc = load_json(dataset_files["description"])
-            # TODO: Generate a UUID programmatically
-
             try:
                 validated_dataset_desc = dataset_description_model.DatasetDescription.model_validate(dataset_desc)
             except ValidationError as err:
                 logger.error(
-                    f"{dataset_files['description']} is not a invalid Neurobagel dataset description. "
+                    f"{dataset_files['description'].name} is not a valid Neurobagel dataset description. "
                     "Skipping dataset."
                     f"\nValidation details:\n"
                     f"{err}",
                 )
+                skipped_json_files.extend([dataset_files["description"].name, dataset_files["dictionary"].name])
                 continue
 
             # dump back to dict
@@ -269,19 +280,25 @@ def extract_datasets_metadata_to_dict(jsonld_dir: Path, output_dir: Path) -> dic
 
             dataset_name = validated_dataset_desc["dataset_name"]
             dataset_uuid = "nb:" + str(uuid.uuid4())
-            dataset_summary_pheno_attributes = get_summary_pheno_attributes_for_dataset(data_dict, dataset_name)
+            dataset_summary_pheno_attributes = get_dataset_level_pheno_attributes(data_dict, dataset_name)
             if dataset_summary_pheno_attributes is None:
                 logger.error(
                     f"Dataset '{dataset_name}': "
                     "Failed to extract summary phenotypic attributes from the data dictionary. "
                     "Skipping dataset."
                 )
+                skipped_json_files.extend([dataset_files["description"].name, dataset_files["dictionary"].name])
                 continue
             dataset_attributes =  {**validated_dataset_desc, **dataset_summary_pheno_attributes}
             datasets_metadata_lookup[dataset_uuid] = dataset_attributes
+        
+        logger.info(
+            f"Dataset metadata successfully parsed from {len(datasets_metadata_lookup)} datasets for catalog mode. "
+            f"Excluded {len(skipped_json_files)} JSON files:\n" + "\n".join(skipped_json_files)
+        )
     else:
-        num_input_jsonlds = len(list(jsonld_dir.glob("*.jsonld")))
-        for idx, jsonld_path in enumerate(jsonld_dir.glob("*.jsonld"), start=1):
+        num_input_jsonlds = len(list(data_files_dir.glob("*.jsonld")))
+        for idx, jsonld_path in enumerate(data_files_dir.glob("*.jsonld"), start=1):
             filename = jsonld_path.name
             logger.info(f"({idx}/{num_input_jsonlds}) Processing file: {filename}")
             jsonld_dataset = load_and_validate_jsonld_dataset(jsonld_path)
