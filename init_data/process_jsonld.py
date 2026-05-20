@@ -47,6 +47,10 @@ jsonld_key_to_dataset_attribute_mapping = {
 
 
 def list_files_with_extension(input_dir: Path, extension: str) -> list[Path]:
+    """
+    Get a list of all files in the input directory with the specified extension
+    and log an error if no such files are found.
+    """
     file_list = list(input_dir.glob(f"*{extension}"))
     if not file_list:
         logger.error(
@@ -271,7 +275,9 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
                 else:
                     missing_file = f"{dataset_file_id}{DATASET_DESCRIPTION_SUFFIX}"
                 logger.error(
-                    f"{file.name} is missing a corresponding {missing_file}. Skipping dataset."
+                    f"{file.name} is missing a corresponding {missing_file}. "
+                    "Ensure that the data dictionary and dataset description files for the dataset have the same prefix. "
+                    "Skipping dataset."
                 )
                 excluded_jsons.append(file.name)
                 continue
@@ -383,17 +389,17 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
 def parse_arguments():
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        description="Validate and extract dataset-level metadata from Neurobagel dataset JSONLD files."
+        description="Validate and extract dataset-level metadata from Neurobagel dataset JSON(LD) files."
     )
     parser.add_argument(
         "input_dir",
         type=lambda p: Path(p).resolve(),
-        help="Directory containing Neurobagel dataset JSONLD files."
+        help="Directory containing Neurobagel dataset JSON or JSONLD files."
     )
     parser.add_argument(
         "output_dir",
         type=lambda p: Path(p).resolve(),
-        help="Directory to save validated JSONLD files and dataset metadata JSON file."
+        help="Directory to save validated JSONLD files and/or dataset metadata JSON file."
     )
     return parser.parse_args()
     
