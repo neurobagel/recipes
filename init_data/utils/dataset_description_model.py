@@ -15,6 +15,7 @@ from pydantic import (
     Field,
     HttpUrl,
     field_validator,
+    PositiveInt,
 )
 
 
@@ -56,7 +57,7 @@ class DatasetDescription(BaseModel):
         ),
     ]
     participant_count: Annotated[
-        int,
+        PositiveInt,  # strictly >0
         Field(
             ...,
             description="Number of participants in the dataset.",
