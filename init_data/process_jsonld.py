@@ -213,8 +213,10 @@ def get_dataset_level_pheno_attributes(data_dict: dict, dataset_name: str) -> di
     if age_column_annotations:
         age_range = age_column_annotations[0]["ValueRange"]
         age_format = age_column_annotations[0]["Format"]["TermURL"]
-        transformed_min = transform_age(age_range["Minimum"], age_format)
-        transformed_max = transform_age(age_range["Maximum"], age_format)
+        raw_min = age_range["Minimum"]
+        raw_max = age_range["Maximum"]
+        transformed_min = transform_age(raw_min, age_format)
+        transformed_max = transform_age(raw_max, age_format)
         if transformed_min is None or transformed_max is None:
             logger.error(
                 f"Dataset '{dataset_name}': Unable to transform the minimum and/or maximum age values to floats. "
@@ -267,13 +269,16 @@ def extract_datasets_metadata_to_dict(data_files_dir: Path, output_dir: Path) ->
                 )
                 excluded_jsons.append(json_file.name)
 
+        # Determine if there are any dataset description or data dictionary files without the corresponding paired file,
+        # to log an informative error message and skip those files
         for dataset_file_id, dataset_files in dataset_json_file_groups.items():
             if "dictionary" not in dataset_files or "description" not in dataset_files:
-                file = dataset_files.get("dictionary") or dataset_files.get("description")
                 if "dictionary" not in dataset_files:
                     missing_file = f"{dataset_file_id}{DATA_DICTIONARY_SUFFIX}"
+                    file = dataset_files["description"]
                 else:
                     missing_file = f"{dataset_file_id}{DATASET_DESCRIPTION_SUFFIX}"
+                    file = dataset_files["dictionary"]
                 logger.error(
                     f"{file.name} is missing a corresponding {missing_file}. "
                     "Ensure that the data dictionary and dataset description files for the dataset have the same prefix. "
