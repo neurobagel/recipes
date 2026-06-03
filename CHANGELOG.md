@@ -1,3 +1,15 @@
+# v0.9.0 (Wed Jun 03 2026)
+
+#### 🚀 Enhancements
+
+- [ENH] Support catalog mode that parses only data dict and dataset description files [#199](https://github.com/neurobagel/recipes/pull/199) ([@alyssadai](https://github.com/alyssadai))
+
+#### Authors: 1
+
+- Alyssa Dai ([@alyssadai](https://github.com/alyssadai))
+
+---
+
 # v0.8.3 (Tue Apr 28 2026)
 
 #### 🐛 Bug Fixes
