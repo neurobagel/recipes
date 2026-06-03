@@ -6,6 +6,8 @@ services:
     volumes:
       - "${LOCAL_GRAPH_DATA:-./data}:/input_data"
       - "neurobagel_data:/data"
+    environment:
+      NB_CATALOG_MODE: ${NB_CATALOG_MODE:-false}
     command: >
       sh -euxc "rm -rf /data/* && python -m init_data.process_jsonld /input_data /data"
 
@@ -30,6 +32,7 @@ services:
       NB_ENABLE_AUTH: ${NB_ENABLE_AUTH:-false}
       NB_QUERY_CLIENT_ID: ${NB_QUERY_CLIENT_ID}
       NB_CONFIG: ${NB_CONFIG:-Neurobagel}
+      NB_CATALOG_MODE: ${NB_CATALOG_MODE:-false}
     volumes:
       - "./scripts/api_entrypoint.sh:/usr/src/api_entrypoint.sh"
       - "neurobagel_data:/data"
