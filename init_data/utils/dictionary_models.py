@@ -4,6 +4,7 @@ from typing import Annotated, Literal
 
 from pydantic import (
     AfterValidator,
+    AliasChoices,
     BaseModel,
     ConfigDict,
     Field,
@@ -54,22 +55,28 @@ class Term(BaseModel):
 
 
 class Range(BaseModel):
-    """A range of numerical values with minimum and maximum bounds provided as strings."""
+    """
+    A range of numerical values with minimum and maximum bounds.
+    
+    TODO: Values should be provided as strings to reflect the raw data.
+    but are currently converted to floats by the annotation tool.
+    Update once the discrepancy is fixed.
+    """
 
     minimum: Annotated[
-        str,
+        float,
         Field(
             ...,
             description="The minimum value in the range, inclusive.",
-            alias="Minimum",
+            alias="Min",  # TODO: Update to "Minimum"
         ),
     ]
     maximum: Annotated[
-        str,
+        float,
         Field(
             ...,
             description="The maximum value in the range, inclusive.",
-            alias="Maximum",
+            alias="Max",  # TODO: Update to "Maximum"
         ),
     ]
 
