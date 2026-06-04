@@ -1,3 +1,15 @@
+# v0.9.1 (Thu Jun 04 2026)
+
+#### 🐛 Bug Fixes
+
+- [FIX] Ensure `ValueRange` schema is compliant with annotation tool-generated data dict [#207](https://github.com/neurobagel/recipes/pull/207) ([@alyssadai](https://github.com/alyssadai))
+
+#### Authors: 1
+
+- Alyssa Dai ([@alyssadai](https://github.com/alyssadai))
+
+---
+
 # v0.9.0 (Wed Jun 03 2026)
 
 #### 🚀 Enhancements
