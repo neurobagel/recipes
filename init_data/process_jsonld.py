@@ -214,6 +214,8 @@ def get_dataset_level_pheno_attributes(data_dict: dict, dataset_name: str) -> di
         age_range = age_column_annotations[0]["ValueRange"]
 
         # TODO: Restore logic once annotation tool stores raw age ranges as strings again
+        # See https://github.com/neurobagel/annotation-tool/issues/569
+        #
         # age_format = age_column_annotations[0]["Format"]["TermURL"]
         # raw_min = age_range["Minimum"]
         # raw_max = age_range["Maximum"]
