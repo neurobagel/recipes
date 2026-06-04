@@ -212,20 +212,29 @@ def get_dataset_level_pheno_attributes(data_dict: dict, dataset_name: str) -> di
         )
     if age_column_annotations:
         age_range = age_column_annotations[0]["ValueRange"]
-        age_format = age_column_annotations[0]["Format"]["TermURL"]
-        raw_min = age_range["Minimum"]
-        raw_max = age_range["Maximum"]
-        transformed_min = transform_age(raw_min, age_format)
-        transformed_max = transform_age(raw_max, age_format)
-        if transformed_min is None or transformed_max is None:
-            logger.error(
-                f"Dataset '{dataset_name}': Unable to transform the minimum and/or maximum age values to floats. "
-                "Skipping dataset."
-            )
-            return None
+
+        # TODO: Restore logic once annotation tool stores raw age ranges as strings again
+        # See https://github.com/neurobagel/annotation-tool/issues/569
+        #
+        # age_format = age_column_annotations[0]["Format"]["TermURL"]
+        # raw_min = age_range["Minimum"]
+        # raw_max = age_range["Maximum"]
+        # transformed_min = transform_age(raw_min, age_format)
+        # transformed_max = transform_age(raw_max, age_format)
+        # if transformed_min is None or transformed_max is None:
+        #     logger.error(
+        #         f"Dataset '{dataset_name}': Unable to transform the minimum and/or maximum age values to floats. "
+        #         "Skipping dataset."
+        #     )
+        #     return None
+        # summary_pheno_attributes["age_range"] = {
+        #     "minimum": transformed_min,
+        #     "maximum": transformed_max,
+        # }
+
         summary_pheno_attributes["age_range"] = {
-            "minimum": transformed_min,
-            "maximum": transformed_max,
+            "minimum": age_range["Min"],
+            "maximum": age_range["Max"],
         }
     else:
         # Or, should we just omit the key altogether?
