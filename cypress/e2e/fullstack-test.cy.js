@@ -62,8 +62,8 @@ describe('When I load the query tool', () => {
         cy.get('[role="listbox"]').contains("T1-weighted image");
         cy.get('[data-cy="Imaging modality-categorical-field"]').click();
 
-        // Pipeline Name
-        cy.get('[data-cy="Pipeline name-categorical-field"]').click();
+        // Pipeline Name and version
+        cy.get('[data-cy="Pipeline name and version-categorical-field"]').click();
         cy.get('[role="listbox"]')
             .within(() => {
                 const terms = ["Freesurfer", "fmriprep"]
@@ -71,7 +71,7 @@ describe('When I load the query tool', () => {
                     cy.contains(term, {matchCase: false})
                 )
             )});
-        cy.get('[data-cy="Pipeline name-categorical-field"]').click();
+        cy.get('[data-cy="Pipeline name and version-categorical-field"]').click();
     });
 });
 
@@ -161,10 +161,7 @@ describe.skip('When I run a filtered query on all nodes', () => {
         cy.get('[data-cy="Minimum number of phenotypic sessions-continuous-field"]').type('1');
         cy.get('[data-cy="Assessment tool-categorical-field"]').type('montreal{downarrow}{enter}')
         cy.get('[data-cy="Imaging modality-categorical-field"]').type('t1{downarrow}{enter}')
-        cy.intercept('/pipelines/np:freesurfer/versions').as('getPipelineVersionsOptions');
-        cy.get('[data-cy="Pipeline name-categorical-field"]').type('freesurfer{downarrow}{enter}')
-        cy.wait('@getPipelineVersionsOptions');
-        cy.get('[data-cy="Pipeline version-categorical-field"]').type('7.3.2{downarrow}{enter}');
+        cy.get('[data-cy="Pipeline name and version-categorical-field"]').type('7.3.2{downarrow}{enter}');
         cy.intercept('*datasets*').as('call');
         cy.get('[data-cy="submit-query-button"]').click();
         cy.wait('@call');
