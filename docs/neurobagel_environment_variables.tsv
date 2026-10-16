@@ -6,7 +6,6 @@ Environment variable	Default needs change?	Description	Default value if not set	
 `NB_GRAPH_MEMORY`	No	The maximum amount of memory that can be used by graph. Equivalent to setting the `-Xmx` parameter on the JVM. Value should be a number followed directly by a letter denoting the size. E.g. `264m` for 264 MB, `2g` for 2 GB. (For more info, see https://graphdb.ontotext.com/documentation/10.8/requirements.html#hardware-sizing.)	`2g`	Docker
 `LOCAL_GRAPH_DATA`	Yes	Path on your filesystem to the JSONLD files you want to upload to the graph database	`./data`	Docker
 `NB_GRAPH_PORT_HOST`	No	Port number on the _host machine_ to map the graph server container port to	`7200`	Docker
-`NB_NAPI_ALLOWED_ORIGINS`	No	Origins allowed to make cross-origin resource sharing requests. Multiple origins must be separated with spaces in a single string enclosed in quotes.	"`""""`"	Docker, Python
 `NB_RETURN_AGG`	No	Whether to return only aggregate, dataset-level query results (excluding subject/session-level attributes). One of [true, false]	`true`	Docker, Python
 `NB_MIN_CELL_SIZE`	No	Minimum number of matching subjects required for a dataset to be returned as a query match. Datasets with matching subjects <= this number will be excluded from query results.	`0`	Docker, Python
 `NB_NAPI_TAG`	No	Docker image tag for the Neurobagel node API	`latest`	Docker
