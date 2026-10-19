@@ -193,10 +193,7 @@ main() {
 
     upload_failed=()
 
-    for db in ${jsonld_dir}/*.jsonld; do
-        # Prevent edge case where no matching files are present in directory and so loop executes once with glob pattern string itself
-        [ -e "$db" ] || continue
-
+	while IFS= read -r -d '' db; do
         echo "$(basename ${db}):"
         response=$(curl -u "${user}:${password}" -s -S -i -w "\n%{http_code}\n" \
                     -X POST $upload_data_url \
@@ -209,11 +206,9 @@ main() {
         fi
         # Print rest of response to stdout
         echo -e "$(sed '$d' <<< "$response")\n"
-    done
+    done < <(find "${jsonld_dir}" -type f -name "*.jsonld" -print0)
 
-    for file in ${jsonld_dir}/*.ttl; do
-        [ -e "$file" ] || continue
-
+    while IFS= read -r -d '' file; do
         echo "$(basename ${file}):"
         response=$(curl -u "${user}:${password}" -s -S -i -w "\n%{http_code}\n" \
                     -X POST $upload_data_url \
@@ -225,7 +220,7 @@ main() {
             upload_failed+=("${file}")
         fi
         echo -e "$(sed '$d' <<< "$response")\n"
-    done
+    done < <(find "${jsonld_dir}" -type f -name "*.ttl" -print0)
 
     echo "FINISHED UPLOADING DATA FROM ${jsonld_dir} TO ${graph_db}."
 
