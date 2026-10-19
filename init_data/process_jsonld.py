@@ -51,7 +51,7 @@ def list_files_with_extension(input_dir: Path, extension: str) -> list[Path]:
     Get a list of all files in the input directory with the specified extension
     and log an error if no such files are found.
     """
-    file_list = list(input_dir.glob(f"*{extension}"))
+    file_list = list(input_dir.rglob(f"*{extension}"))
     if not file_list:
         logger.error(
             f"No {extension} files found in the data directory. "
