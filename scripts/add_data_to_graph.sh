@@ -193,7 +193,12 @@ main() {
 
     upload_failed=()
 
-	while IFS= read -r -d '' db; do
+	# init_data will flatten any data subdirectories while reading/validating the input JSONLD files,
+	# so we can loop through the files directly
+    for db in ${jsonld_dir}/*.jsonld; do
+        # Prevent edge case where no matching files are present in directory and so loop executes once with glob pattern string itself
+        [ -e "$db" ] || continue
+
         echo "$(basename ${db}):"
         response=$(curl -u "${user}:${password}" -s -S -i -w "\n%{http_code}\n" \
                     -X POST $upload_data_url \
@@ -206,9 +211,12 @@ main() {
         fi
         # Print rest of response to stdout
         echo -e "$(sed '$d' <<< "$response")\n"
-    done < <(find "${jsonld_dir}" -type f -name "*.jsonld" -print0)
+    done
 
-    while IFS= read -r -d '' file; do
+	# TODO: Consider removing support for .ttl files, since init_data currently ignores them...
+    for file in ${jsonld_dir}/*.ttl; do
+        [ -e "$file" ] || continue
+
         echo "$(basename ${file}):"
         response=$(curl -u "${user}:${password}" -s -S -i -w "\n%{http_code}\n" \
                     -X POST $upload_data_url \
@@ -220,7 +228,7 @@ main() {
             upload_failed+=("${file}")
         fi
         echo -e "$(sed '$d' <<< "$response")\n"
-    done < <(find "${jsonld_dir}" -type f -name "*.ttl" -print0)
+    done
 
     echo "FINISHED UPLOADING DATA FROM ${jsonld_dir} TO ${graph_db}."
 
