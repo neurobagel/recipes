@@ -1,3 +1,17 @@
+# v0.9.2 (Fri Oct 23 2026)
+
+#### 🚀 Enhancements
+
+- [ENH] Support recursive JSON(LD) upload for subdirectories of `LOCAL_GRAPH_DATA` [#221](https://github.com/neurobagel/recipes/pull/221) ([@alyssadai](https://github.com/alyssadai))
+- [MNT] Remove `NB_API_ALLOWED_ORIGINS` env var [#220](https://github.com/neurobagel/recipes/pull/220) ([@rmanaem](https://github.com/rmanaem))
+
+#### Authors: 2
+
+- Alyssa Dai ([@alyssadai](https://github.com/alyssadai))
+- Arman Jahanpour ([@rmanaem](https://github.com/rmanaem))
+
+---
+
 # v0.9.1 (Thu Jun 04 2026)
 
 #### 🐛 Bug Fixes
