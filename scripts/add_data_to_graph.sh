@@ -193,6 +193,8 @@ main() {
 
     upload_failed=()
 
+	# init_data will flatten any data subdirectories while reading/validating the input JSONLD files,
+	# so we can loop through the files directly
     for db in ${jsonld_dir}/*.jsonld; do
         # Prevent edge case where no matching files are present in directory and so loop executes once with glob pattern string itself
         [ -e "$db" ] || continue
@@ -211,6 +213,7 @@ main() {
         echo -e "$(sed '$d' <<< "$response")\n"
     done
 
+	# TODO: Consider removing support for .ttl files, since init_data currently ignores them...
     for file in ${jsonld_dir}/*.ttl; do
         [ -e "$file" ] || continue
 
